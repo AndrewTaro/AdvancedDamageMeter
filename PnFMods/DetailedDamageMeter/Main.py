@@ -104,9 +104,8 @@ class DamageLogsController(object):
     def update(self, damageLog):
         currentLogs = self._damageLogs
         if len(currentLogs) > 0 and currentLogs[0]['victimId'] == damageLog['victimId']:
-            damageLog = currentLogs[0]
-            damageLog['totalDamage'] += damageLog['lastDamage']
-            damageLog['lastDamage'] = damageLog['lastDamage']
+            damageLog['totalDamage'] += currentLogs[0]['totalDamage']
+            currentLogs[0] = damageLog
         else:
             if len(currentLogs) >= MAX_LOGS_COUNT - 1:
                 currentLogs.pop()
