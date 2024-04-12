@@ -140,13 +140,13 @@
 		(var isBackgroundVisible:bool = "isBackgroundVisibleOnAlt ? altVision : true")
 
 		# Font style
-		(var fontStyleIndex:str = "fontStylePrefIndex < DDM_FONT_COLORS.length ? fontStylePrefIndex : 0")
+		(var fontStyleIndex:number = "fontStylePrefIndex < DDM_FONT_COLORS.length ? fontStylePrefIndex : 0")
 		(var fontColor:number = "DDM_FONT_COLORS[fontStyleIndex]")
 
 		# Draggable
 		(macro STAGE_SIZE)
 		(var elementName:str = "DDM_ELEMENT_NAME + (_isIncomingDamage ? 'Incoming' : 'Outgoing')")
-		(var defaultPos:dict = "{positionX: (_isIncomingDamage ? 500 : 600), positionY: stageHeight - 100}")
+		(var defaultPos:dict = "{positionX: 500, positionY: (_isIncomingDamage ? (stageHeight - 110) : (stageHeight - 220))}")
 		(macro DRAGGABLE_GET_DROP_POSITION _wndName="elementName" _defaults="defaultPos")
 	)
 
@@ -293,12 +293,12 @@
 
 		(macro DDM_GET_PREF_BOOL _varName="'lastDamageVisible'" 	_prefKey="DDM_USERPREFS_KEY.LAST_DAMAGE_VISIBLE" _default="DDM_DEFAULT.LAST_DAMAGE_VISIBLE")
 
-		# Names
+		# Damages
 		(var totalDamage:number = "_damageLogData ? _damageLogData.totalDamage : 0")
 		(var lastDamage:number = "_damageLogData ? _damageLogData.lastDamage : 0")
 		
 		(var totalDamageText:str = "totalDamage")
-		(var lastDamageText:str = "'(+' + lastDamage + ')'")
+		(var lastDamageText:str = "'(+' + lastDamage")
 	)
 
 	(style
@@ -308,8 +308,16 @@
 	)
 
 	(element DDM_TextItem _text="totalDamageText" _width="50px" _textAlign="right")
-	(element DDM_TextItem _text="lastDamageText" _width="60px" _textAlign="right"
+	(hblock
+		(style
+			(align = "middle|center")
+			(height = 100%)
+		)
 		(bind visible "lastDamageVisible")
+		
+		(element DDM_TextItem _text="lastDamageText" _width="60px" _textAlign="right")
+		(element DDM_AmmoIconItem _damageLogData="_damageLogData")
+		(element DDM_TextItem _text="')'")
 	)
 )
 
@@ -321,7 +329,7 @@
 		(macro DDM_GET_PREF_NUMBER _varName="'fontStylePrefIndex'" _prefKey="DDM_USERPREFS_KEY.FONT_STYLE_INDEX" _default="DDM_DEFAULT.FONT_STYLE_INDEX")
 
 		# Names
-		(var fontStyleIndex:str = "fontStylePrefIndex < DDM_FONT_COLORS.length ? fontStylePrefIndex : 0")
+		(var fontStyleIndex:number = "fontStylePrefIndex < DDM_FONT_COLORS.length ? fontStylePrefIndex : 0")
 		(var fontColor:number = "DDM_FONT_COLORS[fontStyleIndex]")
 	)
 
@@ -338,6 +346,22 @@
 			(elideMode = "true")
 		)
 		(bind text "_text")
+	)
+)
+
+(def element DDM_AmmoIconItem(_damageLogData:dict)
+	(scope
+		(var ammoType:str = "_damageLogData && _damageLogData.ammoType ? _damageLogData.ammoType : ''")
+		(var weaponIconPath:str = "'url:../battle_hud/icon_frag/icon_frag_' + ammoType + '.png'")
+	)
+
+	(bind alpha "ammoType ? 1.0 : 0")
+
+	(style 
+		(width = 21px)
+		(height = 21px)
+		(marginTop = "-2px")
+		(bind backgroundImage "weaponIconPath")
 	)
 )
 
