@@ -1,0 +1,385 @@
+(def constant TT_DAMAGEMETER_INSTALLED true) #for modconfig
+(def constant DDM_ELEMENT_NAME 'detailedDamageMeter') #for modconfig
+
+(def css $DDM_TextStyle()
+	(extends $TextDefault)
+	(filters 
+		(dropShadow 
+			(distance = 1)
+			(angle = 90)
+			(color = 0x08222a)
+			(alpha = 0.5)
+			(blurX = 2.0)
+			(blurY = 2.0)
+			(strength = 1.0)
+			(quality = 2)
+		)
+	)
+)
+
+(def constant DDM_FONT_COLORS [
+	"FONT_CLASS_TO_COLOR['$FontColorDefault']",
+	"FONT_CLASS_TO_COLOR['$FontColorBuoyancy']",
+	"FONT_CLASS_TO_COLOR['$FontColorGolden']",
+	"FONT_CLASS_TO_COLOR['$FontColorGreen']",
+	"FONT_CLASS_TO_COLOR['$FontColorOrange']",
+])
+
+(def constant DDM_USERPREFS_KEY {
+	INCOMING_DAMAGE_VISIBLE: 'dDamageMeterIncomingDamageVisible', # Damage you deal
+	OUTGOING_DAMAGE_VISIBLE: 'dDamageMeterOutgoingDamageVisible', # Damage enemies deal
+	VISIBLE_ON_ALT: 'dDamageMeterVisibleOnAlt', # Blur or Contrast
+	CLAN_TAG_VISIBLE: 'dDamageMeterClanTagVisible', # Damage owner's name
+	PLAYER_NAME_VISIBLE: 'dDamageMeterPlayerNameVisible', # Damage owner's name
+	PLAYER_INFO_WIDTH: 'dDamageMeterPlayerInfoWidth', # Damage owner's name width
+	SHIP_NAME_VISIBLE: 'dDamageMeterShipNameVisible', # Damage owner's Ship Name
+	SHIP_NAME_WIDTH: 'dDamageMeterShipInfoWidth', # Damage owner's ship type icon
+	SHIP_TYPE_VISIBLE: 'dDamageMeterShipTypeVisible', # Damage owner's ship type icon
+	LAST_DAMAGE_VISIBLE: 'dDamageMeterLastDamageVisible', # Damage diff e.g. (+1490)
+	NUM_ROWS: 'dDamageMeterNumRows', # number of rows
+	SCALE: 'dDamageMeterScale', # scale size
+	FONT_STYLE_INDEX: 'dDamageMeterFontStyleIndex', # Light, Dark, anything else?
+	BACKGROUND_VISIBLE_ON_ALT: 'dDamageMeterBackgroundVisibleOnAlt', # Contrast Panel
+	BACKGROUND_ALPHA: 'dDamageMeterBackgroundOpacity', # Contrast Panel
+	#BACKGROUND_USE_BLUR: 'dDamageMeterBackgroundUseBlur', # Blur
+})
+
+(def constant DDM_DEFAULT {
+	INCOMING_DAMAGE_VISIBLE: true, # Damage you deal
+	OUTGOING_DAMAGE_VISIBLE: true, # Damage enemies deal
+	VISIBLE_ON_ALT: false, # Blur or Contrast
+	CLAN_TAG_VISIBLE: false, # Damage owner's name
+	PLAYER_NAME_VISIBLE: true, # Damage owner's name
+	PLAYER_INFO_WIDTH: 1.0,
+	SHIP_NAME_VISIBLE: true, # Damage owner's Ship Name
+	SHIP_NAME_WIDTH: 1.0,
+	SHIP_TYPE_VISIBLE: true, # Damage owner's ship type icon
+	LAST_DAMAGE_VISIBLE: true, # Damage diff e.g. (+1490)
+	NUM_ROWS: 3, # number of rows
+	SCALE: 1.0, # scale size
+	FONT_STYLE_INDEX: 0, #
+	BACKGROUND_VISIBLE_ON_ALT: false, # Contrast Panel
+	BACKGROUND_ALPHA: 0.4, # Contrast Panel
+	#BACKGROUND_USE_BLUR: false, # Blur
+})
+
+(def constant DDM_PLAYER_INFO_WIDTH 120px)
+(def constant DDM_SHIP_NAME_WIDTH 90px)
+(def constant DDM_ROW_HEIGHT 25px)
+
+(def constant DDM_PARAMETER_KEY 'modDetailedDamageMeterEntityIds')
+
+(def macro DDM_GET_USERPREF()
+	(var userPrefsComponent:gfx = "$datahub.getSingleComponent(CC.userPrefs)")
+	(var userPrefsNum:gfx = "userPrefsComponent.userPrefs.chatBoxWidth" watch=false (event "userPrefsComponent.evUserPrefsChanged"))
+)
+
+(def macro DDM_GET_PREF_NUMBER (_varName:expression, _prefKey:expression, _default:expression="0", _offset:expression="0.0", _modifier:expression="1.0")
+	(var name="_varName" type=number value="(userPrefsNum && userPrefsNum[_prefKey] != null) ? _offset + (round(userPrefsNum[_prefKey]) * _modifier) : _default")
+)
+
+(def macro DDM_GET_PREF_BOOL (_varName:expression, _prefKey:expression, _default:expression="true")
+	(var name="_varName" type=bool value="(userPrefsNum && userPrefsNum[_prefKey] != null) ? round(userPrefsNum[_prefKey]) : _default")
+)
+
+(def macro DDM_GET_DAMAGELOG_ENTITY_ID(_isIncomingDamage:expression="true")
+	(var __parameterCol:gfx = "$datahub.getCollection(CC.parameter)")
+	(var __damageMeterIdsEntity:gfx = "$datahub.getPrimaryCompositeEntity(CC.parameter, 0, DDM_PARAMETER_KEY)" (event "__parameterCol.evAdded"))
+	(var __dataComponent:gfx = "__damageMeterIdsEntity && __damageMeterIdsEntity.hasComponent(CC.dataComponent) ? __damageMeterIdsEntity.dataComponent : null" (event "__damageMeterIdsEntity.evAdded"))
+	(var __damageLogKey:str = "_isIncomingDamage ? 'incomingDamageLogEntityId' : 'outgoingDamageLogEntityId'")
+	(var damageLogEntityId:number = "__dataComponent ? __dataComponent.data[__damageLogKey] : 0" (event "__dataComponent.evDataChanged"))
+)
+
+(def element DDM_DetailedDamageMeter() layout=true
+	(scope
+		(macro STAGE_SIZE)
+	)
+
+	(style
+		(bind width "stageWidth")
+		(bind height "stageHeight")
+	)
+
+	(element DDM_DamageMeterItem _isIncomingDamage="true")
+	(element DDM_DamageMeterItem _isIncomingDamage="false")
+)
+
+(def element DDM_DamageMeterItem(_isIncomingDamage:bool=true)
+	(scope
+		#Userprefs
+		(macro DDM_GET_USERPREF)
+
+		(var isVisiblePrefKey:str =  "_isIncomingDamage ? DDM_USERPREFS_KEY.INCOMING_DAMAGE_VISIBLE : DDM_USERPREFS_KEY.OUTGOING_DAMAGE_VISIBLE")
+		(var isVisibleDefault:bool = "_isIncomingDamage ? DDM_DEFAULT.INCOMING_DAMAGE_VISIBLE 		: DDM_DEFAULT.OUTGOING_DAMAGE_VISIBLE")
+
+		(macro DDM_GET_PREF_NUMBER _varName="'scale'" 			_prefKey="DDM_USERPREFS_KEY.SCALE"			_default="DDM_DEFAULT.SCALE" _modifier="0.1" _offset="0.5")
+		(macro DDM_GET_PREF_NUMBER _varName="'rowCounts'" 		_prefKey="DDM_USERPREFS_KEY.NUM_ROWS" 		_default="DDM_DEFAULT.NUM_ROWS" _offset="1")
+		(macro DDM_GET_PREF_NUMBER _varName="'fontStylePrefIndex'"	 	_prefKey="DDM_USERPREFS_KEY.FONT_STYLE_INDEX" _default="DDM_DEFAULT.FONT_STYLE_INDEX")
+		(macro DDM_GET_PREF_NUMBER _varName="'backgroundAlpha'"			_prefKey="DDM_USERPREFS_KEY.BACKGROUND_ALPHA" _default="DDM_DEFAULT.BACKGROUND_ALPHA" _modifier="0.1")
+
+		(macro DDM_GET_PREF_BOOL _varName="'isEnabled'" 		_prefKey="isVisiblePrefKey" 				_default="isVisibleDefault")
+		(macro DDM_GET_PREF_BOOL _varName="'isVisibleOnAlt'"	_prefKey="DDM_USERPREFS_KEY.VISIBLE_ON_ALT" _default="DDM_DEFAULT.VISIBLE_ON_ALT")
+		(macro DDM_GET_PREF_BOOL _varName="'isBackgroundVisibleOnAlt'"	_prefKey="DDM_USERPREFS_KEY.BACKGROUND_VISIBLE_ON_ALT" _default="DDM_DEFAULT.BACKGROUND_VISIBLE_ON_ALT")
+		#(macro DDM_GET_PREF_BOOL _varName="'isBackgroundBlur'"			_prefKey="DDM_USERPREFS_KEY.BACKGROUND_USE_BLUR"	   _default="DDM_DEFAULT.BACKGROUND_USE_BLUR")
+
+		# DamageLogEntity
+		(macro DDM_GET_DAMAGELOG_ENTITY_ID _isIncomingDamage="_isIncomingDamage")
+		(var damageLogsEntity:gfx = "$datahub.getEntity(damageLogEntityId)")
+		(var dataComponent:gfx = "damageLogsEntity && damageLogsEntity.hasComponent(CC.dataComponent) ? damageLogsEntity.dataComponent : null" (event "damageLogsEntity.evAdded"))
+		(var damageLogsData:array = "dataComponent ? dataComponent.data.damageLogs : []" (event "dataComponent.evDataChanged"))
+
+		# Header Text
+		(var headerText:str = "_isIncomingDamage ? 'IDS_TAKEN_DAMAGE_HINT' : 'IDS_BATTLE_STATS_CAUSED_DAMAGE'")
+
+		# Visibility
+		(var camera:gfx = "$datahub.getSingleComponent(CC.camera)")
+		(var altVision:bool = "camera.altVision" (event "camera.evAltVisionChanged"))
+		(var isVisible:bool = "isEnabled ? (isVisibleOnAlt ? altVision : true) : false")
+
+		# Background
+		(var isBackgroundVisible:bool = "isBackgroundVisibleOnAlt ? altVision : true")
+
+		# Font style
+		(var fontStyleIndex:str = "fontStylePrefIndex < DDM_FONT_COLORS.length ? fontStylePrefIndex : 0")
+		(var fontColor:number = "DDM_FONT_COLORS[fontStyleIndex]")
+
+		# Draggable
+		(macro STAGE_SIZE)
+		(var elementName:str = "DDM_ELEMENT_NAME + (_isIncomingDamage ? 'Incoming' : 'Outgoing')")
+		(var defaultPos:dict = "{positionX: (_isIncomingDamage ? 500 : 600), positionY: stageHeight - 100}")
+		(macro DRAGGABLE_GET_DROP_POSITION _wndName="elementName" _defaults="defaultPos")
+	)
+
+	(bind visible "isVisible")
+
+	(style
+		(position = "absolute")
+		(bind left "dragPosX")
+		(bind top "dragPosY")
+		(bind scaleX "scale")
+		(bind scaleY "scale")
+	)
+
+	(element ModDraggableElement _wndName="elementName" _defaults="defaultPos")
+	
+	# (element StrategicActionsBackground
+	# 	(bind visible "isBackgroundVisible && isBackgroundBlur")
+	# )
+	# (element DDM_ContrastPanel _isBlur="isBackgroundBlur" _intensity="backgroundAlpha"
+	# 	(bind visible "isBackgroundVisible")
+	# )
+
+	(block
+		(style
+			(hitTest = false)
+		)
+		(mc contrast_panel
+			(class $FullsizeAbsolute)
+			(bind visible "isBackgroundVisible")
+			(style
+				(bind alpha "backgroundAlpha")
+			)
+		)
+
+		(block
+			(style
+				(padding = 10px)
+			)
+
+			(tf
+				(class $TextDefaultBold)
+				(style
+					(bind textColor "fontColor")
+				)
+				(bind text "headerText")
+			)
+
+			(block
+				(style
+					(vgap = -5px)
+					#(marginBottom = -5px)
+				)
+				(controller $Repeat renderer='DDM_DamageMeterRowItem'
+					(bind count "rowCounts")
+					(args
+						_damageLogData="damageLogsData[$index]"
+					)
+				)
+			)
+		)
+	)
+)
+
+(def element DDM_DamageMeterRowItem(_damageLogData:dict=null)
+	(scope
+	)
+
+	(style
+		(bind alpha "_damageLogData ? 1.0 : 0")
+		(height = "DDM_ROW_HEIGHT")
+		(flow = "Flow.HORIZONTAL")
+		(align = "middle|center")
+	)
+
+	(element DDM_PlayerNameAndTagItem _damageLogData="_damageLogData")
+	(element DDM_ShipInfoItem _damageLogData="_damageLogData")
+	(element DDM_DamageInfoItem _damageLogData="_damageLogData")
+)
+
+(def element DDM_PlayerNameAndTagItem(_damageLogData:dict)
+	(scope
+		# Userprefs
+		(macro DDM_GET_USERPREF)
+
+		(macro DDM_GET_PREF_BOOL 	_varName="'isClanTagVisible'" 	_prefKey="DDM_USERPREFS_KEY.CLAN_TAG_VISIBLE" 	 _default="DDM_DEFAULT.CLAN_TAG_VISIBLE")
+		(macro DDM_GET_PREF_BOOL 	_varName="'isPlayerNameVisible'" 	_prefKey="DDM_USERPREFS_KEY.PLAYER_NAME_VISIBLE" _default="DDM_DEFAULT.PLAYER_NAME_VISIBLE")
+		(macro DDM_GET_PREF_NUMBER 	_varName="'widthModifier'"		_prefKey="DDM_USERPREFS_KEY.PLAYER_INFO_WIDTH" 	 _default="DDM_DEFAULT.PLAYER_INFO_WIDTH" _modifier="0.1" _offset="0.5")
+
+		# Names
+		(var playerName:str = "isPlayerNameVisible && _damageLogData ? _damageLogData.playerName : ''")
+
+		(var clanTag:str = "_damageLogData ? _damageLogData.clanTag : ''")
+		(var clanTagWithBrackets:str = "isClanTagVisible && clanTag ? '[' + clanTag + ']' : ''")
+
+		(var nameWithTag:str = "clanTagWithBrackets + playerName")
+
+		(var nameWidth:number = "DDM_PLAYER_INFO_WIDTH * widthModifier")
+	)
+
+	(style
+		(height = 100%)
+	)
+
+	(bind visible "isClanTagVisible || isPlayerNameVisible")
+
+	(element DDM_TextItem _text="nameWithTag" _width="nameWidth")
+)
+
+(def element DDM_ShipInfoItem(_damageLogData:dict)
+	(scope
+		# Userprefs
+		(macro DDM_GET_USERPREF)
+
+		(macro DDM_GET_PREF_BOOL	_varName="'shipNameVisible'" 	_prefKey="DDM_USERPREFS_KEY.SHIP_NAME_VISIBLE" _default="DDM_DEFAULT.SHIP_NAME_VISIBLE")
+		(macro DDM_GET_PREF_BOOL 	_varName="'shipTypeVisible'" 	_prefKey="DDM_USERPREFS_KEY.SHIP_TYPE_VISIBLE" _default="DDM_DEFAULT.SHIP_TYPE_VISIBLE")
+		(macro DDM_GET_PREF_NUMBER 	_varName="'widthModifier'"		_prefKey="DDM_USERPREFS_KEY.SHIP_NAME_WIDTH"   _default="DDM_DEFAULT.SHIP_NAME_WIDTH" _modifier="0.1" _offset="0.5")
+
+		# Names
+		(var shipName:str = "_damageLogData ? tr(_damageLogData.shipNameIDS) : ''")
+		(var shipType:str = "_damageLogData ? _damageLogData.subtype : ''")
+
+		# Width
+		(var nameWidth:number = "DDM_SHIP_NAME_WIDTH * widthModifier")
+	)
+
+	(style
+		(height = 100%)
+		(flow = "Flow.HORIZONTAL")
+		#(align = "center|middle")
+	)
+
+	(element ShipIcon _shipType="shipType"
+		(bind visible "shipTypeVisible")
+	)
+	(element DDM_TextItem _text="shipName" _width="nameWidth"
+		(bind visible "shipNameVisible")
+	)
+)
+
+(def element DDM_DamageInfoItem(_damageLogData:dict)
+	(scope
+		# Userprefs
+		(macro DDM_GET_USERPREF)
+
+		(macro DDM_GET_PREF_BOOL _varName="'lastDamageVisible'" 	_prefKey="DDM_USERPREFS_KEY.LAST_DAMAGE_VISIBLE" _default="DDM_DEFAULT.LAST_DAMAGE_VISIBLE")
+
+		# Names
+		(var totalDamage:number = "_damageLogData ? _damageLogData.totalDamage : 0")
+		(var lastDamage:number = "_damageLogData ? _damageLogData.lastDamage : 0")
+		
+		(var totalDamageText:str = "totalDamage")
+		(var lastDamageText:str = "'(+' + lastDamage + ')'")
+	)
+
+	(style
+		(height = 100%)
+		(flow = "Flow.HORIZONTAL")
+		(align = "center|middle")
+	)
+
+	(element DDM_TextItem _text="totalDamageText" _width="50px" _textAlign="right")
+	(element DDM_TextItem _text="lastDamageText" _width="60px" _textAlign="right"
+		(bind visible "lastDamageVisible")
+	)
+)
+
+(def element DDM_TextItem(_text:str, _width:number="'auto'", _textAlign:number = "left")
+	(scope
+		# Userprefs
+		(macro DDM_GET_USERPREF)
+
+		(macro DDM_GET_PREF_NUMBER _varName="'fontStylePrefIndex'" _prefKey="DDM_USERPREFS_KEY.FONT_STYLE_INDEX" _default="DDM_DEFAULT.FONT_STYLE_INDEX")
+
+		# Names
+		(var fontStyleIndex:str = "fontStylePrefIndex < DDM_FONT_COLORS.length ? fontStylePrefIndex : 0")
+		(var fontColor:number = "DDM_FONT_COLORS[fontStyleIndex]")
+	)
+
+	(style
+		(bind width "_width")
+	)
+
+	(tf
+		(class $DDM_TextStyle)
+		(style
+			(bind width "_width")
+			(bind textAlign "_textAlign")
+			(bind textColor "fontColor")
+			(elideMode = "true")
+		)
+		(bind text "_text")
+	)
+)
+
+(def element DDM_ContrastPanel(_isBlur:bool=false, _intensity:number="1.0")
+	(scope
+		(var panelElement:str = "_isBlur ? 'DDM_ContrastPanelBlur' : 'DDM_ContrastPanelNormal'")
+	)
+	(class $FullsizeAbsolute)
+	(style
+		(hitTest = false)
+	)
+	(controller $Instance
+		(bind renderer "panelElement")
+		(args "_intensity")
+	)
+)
+
+(def element DDM_ContrastPanelNormal(_alpha:number=1.0)
+	(class $FullsizeAbsolute)
+	(mc contrast_panel
+		(class $FullsizeAbsolute)
+		(bind alpha "_alpha")
+	)
+)
+
+(def element DDM_ContrastPanelBlur(_blurIntensity:number=0.3)
+	(class $FullsizeAbsolute)
+	(element DeclareBlurLayer)
+	(mc mc_blurmap_medium
+		(class $FullsizeAbsolute)
+		(rendererString = blurMeBaby)
+		(macro DDM_BIND_BLURINTENSITY "_blurIntensity")
+	)
+)
+
+(def macro DDM_BIND_BLURINTENSITY(_blurIntensity:expression="0.4")
+	(controller $Animation
+		(bindcall play  duration="0.0001"
+						to	 = "{ blurIntensity: _blurIntensity }"
+						watch=false
+						init=true
+						(bind trigger "_blurIntensity")
+		)
+	)
+)
