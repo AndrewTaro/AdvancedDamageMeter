@@ -10,6 +10,23 @@ except:
 MAX_LOGS_COUNT = 10
 PARAMETER_ID = 'modDetailedDamageMeterEntityIds'
 
+AMMO_TYPE_TO_ICON_NAME = {
+    'AP': 'main_caliber',
+    'HE': 'main_caliber',
+    'CS': 'main_caliber',
+    'SECTOR_WAVE': 'wave',
+    'impulseLaser': 'laser',
+    'chargeLaser': 'laser',
+    'axisLaser': 'laser',
+    'seaMine': 'naval_mine',
+    'mine': 'mine',
+    'skip': 'skip',
+    'depthcharge': 'depthbomb',
+    'torpedo': 'torpedo',
+    'bomb': 'bomb',
+    'rocket': 'rocket',
+}
+
 
 class DetailedDamageMeter(object):
 
@@ -44,7 +61,7 @@ class DetailedDamageMeter(object):
         :return:
         """
         data = self.__getPlayerData(damagedPlayer)
-        data['ammoType'] = self.__getAmmoType(ammoId)
+        data['ammoType'] = self.__getAmmoName(ammoId)
         data['lastDamage'] = damage
         data['totalDamage'] = damage
         return data
@@ -64,15 +81,19 @@ class DetailedDamageMeter(object):
         )
         return info
 
-    def __getAmmoType(self, ammoId):
+    def __getAmmoName(self, ammoId):
         """
         Get ammo type by ammo id
         :type ammoId: long
         :rtype: str
         """
+        ammoType = None
         ammoInfo = battle.getAmmoParams(ammoId)
-        ammoType = ammoInfo.ammoType
-        return ammoType
+        try:
+            ammoType = ammoInfo.planeAmmoType
+        except:
+            ammoType = ammoInfo.ammoType
+        return AMMO_TYPE_TO_ICON_NAME.get(ammoType, None)
 
     def onBattleStart(self):
         self.incomingDamageLogs = DamageLogsController()
