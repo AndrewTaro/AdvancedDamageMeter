@@ -492,9 +492,8 @@
 		(var weaponIconPath:str = "'url:../battle_hud/icon_frag/icon_frag_' + ammoType + '.png'")
 	)
 
-	(bind alpha "ammoType ? 1.0 : 0")
-
-	(style 
+	(style
+		(bind alpha "ammoType ? 1.0 : 0")
 		(width = 21px)
 		(height = 21px)
 		(marginTop = "-2px")
