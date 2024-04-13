@@ -141,7 +141,7 @@ class DamageLogsController(object):
         #
         # initdict = {}
         # id(initdict) #>> 0L
-        # ui.addDataComponent(entityId, {'data': {}})
+        # ui.addDataComponent(entityId, {'data': initdict})
         # #>> This will be reflected to Ub Datahub
         #
         # somedict = {'key': 'value'}
@@ -154,7 +154,8 @@ class DamageLogsController(object):
         # ui.updateUiElementData(entityId, {'data': somedict})
         # #>> However, this does not trigger evDataChanged, because the address on memory remains unchanged.
         #
-        # You MUST create a new instance of the object in order to trigger the update event.
+        # Thus, you must create a new instance of the object in order to trigger the update event.
+        # This behavior applies recursively. So objects within another object (in this mod's case, damageLog dicts in list) also need to be on new memory address.
         #
         ui.updateUiElementData(self.damageLogEntityId, {'data': {'damageLogs': list(currentLogs)}})
 
