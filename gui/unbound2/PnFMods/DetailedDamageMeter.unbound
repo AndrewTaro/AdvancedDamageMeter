@@ -2,7 +2,8 @@
 (def constant DDM_ELEMENT_NAME 'detailedDamageMeter') #for modconfig
 
 (def css $DDM_TextStyle()
-	(extends $TextDefault)
+	(extends $TextDefaultNM)
+	(extends $FontEnableReadability)
 	(filters 
 		(dropShadow 
 			(distance = 1)
@@ -25,47 +26,98 @@
 	"FONT_CLASS_TO_COLOR['$FontColorOrange']",
 ])
 
-(def constant DDM_USERPREFS_KEY {
-	INCOMING_DAMAGE_VISIBLE: 'dDamageMeterIncomingDamageVisible', # Damage you deal
-	OUTGOING_DAMAGE_VISIBLE: 'dDamageMeterOutgoingDamageVisible', # Damage enemies deal
-	VISIBLE_ON_ALT: 'dDamageMeterVisibleOnAlt', # Blur or Contrast
-	CLAN_TAG_VISIBLE: 'dDamageMeterClanTagVisible', # Damage owner's name
-	PLAYER_NAME_VISIBLE: 'dDamageMeterPlayerNameVisible', # Damage owner's name
-	PLAYER_INFO_WIDTH: 'dDamageMeterPlayerInfoWidth', # Damage owner's name width
-	SHIP_NAME_VISIBLE: 'dDamageMeterShipNameVisible', # Damage owner's Ship Name
-	SHIP_NAME_WIDTH: 'dDamageMeterShipInfoWidth', # Damage owner's ship type icon
-	SHIP_TYPE_VISIBLE: 'dDamageMeterShipTypeVisible', # Damage owner's ship type icon
-	LAST_DAMAGE_VISIBLE: 'dDamageMeterLastDamageVisible', # Damage diff e.g. (+1490)
-	NUM_ROWS: 'dDamageMeterNumRows', # number of rows
-	SCALE: 'dDamageMeterScale', # scale size
-	FONT_STYLE_INDEX: 'dDamageMeterFontStyleIndex', # Light, Dark, anything else?
-	BACKGROUND_VISIBLE_ON_ALT: 'dDamageMeterBackgroundVisibleOnAlt', # Contrast Panel
-	BACKGROUND_ALPHA: 'dDamageMeterBackgroundOpacity', # Contrast Panel
-	#BACKGROUND_USE_BLUR: 'dDamageMeterBackgroundUseBlur', # Blur
-})
+(def constant DDM_SHIP_ICON_COLOR_PRESET [
+	#Use -(234-0x??)
+	#None
+	{
+		Auxiliary:	{},
+		AirCarrier:	{},
+		Battleship:	{},
+		Cruiser:	{},
+		Destroyer: 	{},
+		Submarine:	{},
+	},
+	#Aslain v1
+	{
+		Auxiliary:	{redOffset: -184, greenOffset: -134, blueOffset: -234, alphaOffset:    0},
+		AirCarrier:	{redOffset: -106, greenOffset:  -64, blueOffset:   21, alphaOffset:    0},
+		Battleship:	{redOffset:   21, greenOffset: -106, blueOffset: -106, alphaOffset:    0},
+		Cruiser:	{redOffset:	  21, greenOffset: 	  0, blueOffset: -106, alphaOffset:    0},
+		Destroyer: 	{redOffset:	 -64, greenOffset: 	 21, blueOffset: -106, alphaOffset:    0},
+		Submarine:	{redOffset: -207, greenOffset:    4, blueOffset:   11, alphaOffset:    0},
+	},
+	#Aslain v2
+	{
+		Auxiliary:	{redOffset: -184, greenOffset: -134, blueOffset: -234, alphaOffset:    0},
+		AirCarrier:	{redOffset:  -43, greenOffset: -106, blueOffset:   21, alphaOffset:    0},
+		Battleship:	{redOffset:   21, greenOffset: -106, blueOffset: -106, alphaOffset:    0},
+		Cruiser:	{redOffset:	  21, greenOffset: 	  0, blueOffset: -106, alphaOffset:    0},
+		Destroyer: 	{redOffset:	 -64, greenOffset: 	 21, blueOffset: -106, alphaOffset:    0},
+		Submarine:	{redOffset: -106, greenOffset:  -64, blueOffset:   21, alphaOffset:    0},
+	},
+	#AutoSpy
+	{
+		Auxiliary:	{redOffset: -184, greenOffset: -134, blueOffset: -234, alphaOffset: -128},
+		AirCarrier:	{redOffset: -134, greenOffset: -134, blueOffset: -134, alphaOffset: -128},
+		Battleship:	{redOffset: -234, greenOffset: -184, blueOffset: -154, alphaOffset: -128},
+		Cruiser:	{redOffset: -89,  greenOffset: -159, blueOffset: -234, alphaOffset: -128},
+		Destroyer: 	{redOffset: -184, greenOffset: -134, blueOffset: -184, alphaOffset: -128},
+		Submarine:	{redOffset: -224, greenOffset: -224, blueOffset: -224, alphaOffset: -128},
+	},
+	#Roslich
+	{
+		Auxiliary:	{redOffset:   21, greenOffset: -234, blueOffset:   21, alphaOffset:    0},
+		AirCarrier:	{redOffset:   21, greenOffset:   21, blueOffset: -234, alphaOffset:    0},
+		Battleship:	{redOffset:   21, greenOffset: -234, blueOffset: -234, alphaOffset:    0},
+		Cruiser:	{redOffset: -234, greenOffset: -234, blueOffset:   21, alphaOffset:    0},
+		Destroyer: 	{redOffset: -234, greenOffset:    0, blueOffset: -234, alphaOffset:    0},
+		Submarine:	{redOffset: -234, greenOffset:   21, blueOffset:   21, alphaOffset:    0},
+	},
+	#DeCease
+	{
+		Auxiliary:	{redOffset:   11, greenOffset: -235, blueOffset:   40, alphaOffset:    0},
+		AirCarrier:	{redOffset:   -9, greenOffset:  -60, blueOffset: -119, alphaOffset:    0},
+		Battleship:	{redOffset:  -65, greenOffset:  -74, blueOffset:   40, alphaOffset:    0},
+		Cruiser:	{redOffset:   20, greenOffset:  -76, blueOffset: -128, alphaOffset:    0},
+		Destroyer: 	{redOffset: -137, greenOffset:   11, blueOffset: -124, alphaOffset:    0},
+		Submarine:	{redOffset: -255, greenOffset: -255, blueOffset: -255, alphaOffset:    0},
+	},
+	#Hakabase
+	{
+		Auxiliary:	{redOffset: -184, greenOffset: -134, blueOffset: -234, alphaOffset:  -70},
+		AirCarrier:	{redOffset: -226, greenOffset:   -7, blueOffset:   21, alphaOffset:  -70},
+		Battleship:	{redOffset:   21, greenOffset: -234, blueOffset: -234, alphaOffset:  -70},
+		Cruiser:	{redOffset:	  21, greenOffset: 	 21, blueOffset: -234, alphaOffset:  -70},
+		Destroyer: 	{redOffset:	-234, greenOffset: 	 21, blueOffset: -234, alphaOffset:  -70},
+		Submarine:	{redOffset:   21, greenOffset: -234, blueOffset:  -81, alphaOffset:  -70},
+	},
+])
 
-(def constant DDM_DEFAULT {
-	INCOMING_DAMAGE_VISIBLE: true, # Damage you deal
-	OUTGOING_DAMAGE_VISIBLE: true, # Damage enemies deal
-	VISIBLE_ON_ALT: false, # Blur or Contrast
-	CLAN_TAG_VISIBLE: false, # Damage owner's name
-	PLAYER_NAME_VISIBLE: true, # Damage owner's name
-	PLAYER_INFO_WIDTH: 1.0,
-	SHIP_NAME_VISIBLE: true, # Damage owner's Ship Name
-	SHIP_NAME_WIDTH: 1.0,
-	SHIP_TYPE_VISIBLE: true, # Damage owner's ship type icon
-	LAST_DAMAGE_VISIBLE: true, # Damage diff e.g. (+1490)
-	NUM_ROWS: 3, # number of rows
-	SCALE: 1.0, # scale size
-	FONT_STYLE_INDEX: 0, #
-	BACKGROUND_VISIBLE_ON_ALT: false, # Contrast Panel
-	BACKGROUND_ALPHA: 0.4, # Contrast Panel
-	#BACKGROUND_USE_BLUR: false, # Blur
+(def constant DDM_PREFS {
+	INCOMING_DAMAGE_VISIBLE		: {KEY: 'dDamageMeterIncomingDamageVisible', 	DEFAULT: true},	# Incoming Damage
+	OUTGOING_DAMAGE_VISIBLE		: {KEY: 'dDamageMeterOutgoingDamageVisible', 	DEFAULT: true},	# Outgoing Damage
+	VISIBLE_ON_ALT				: {KEY: 'dDamageMeterVisibleOnAlt',				DEFAULT: false},# Visible Only on Alt Key
+	REVERSE_ROWS				: {KEY: 'dDamageMeterReverseRows',				DEFAULT: false},# Reverse Row Prder
+	ROW_INDEX_VISIBLE			: {KEY: 'dDamageMeterRowIndexVisible',			DEFAULT: true},	# Row Index
+	CLAN_TAG_VISIBLE			: {KEY: 'dDamageMeterClanTagVisible',			DEFAULT: false},# Clan Tag
+	PLAYER_NAME_VISIBLE			: {KEY: 'dDamageMeterPlayerNameVisible',		DEFAULT: true}, # Player Name
+	PLAYER_INFO_WIDTH			: {KEY: 'dDamageMeterPlayerInfoWidth', 			DEFAULT: 1.0},	# Name Width
+	SHIP_NAME_VISIBLE			: {KEY: 'dDamageMeterShipNameVisible', 			DEFAULT: true},	# Ship Name
+	SHIP_NAME_WIDTH				: {KEY: 'dDamageMeterShipInfoWidth', 			DEFAULT: 1.0},	# Ship Name Width
+	SHIP_TYPE_VISIBLE			: {KEY: 'dDamageMeterShipTypeVisible', 			DEFAULT: true},	# Ship Icon
+	SHIP_TYPE_STYLE_INDEX		: {KEY: 'dDamageMeterShipTypeStyleIndex',		DEFAULT: 0},	# Ship Icon Color
+	LAST_DAMAGE_VISIBLE			: {KEY: 'dDamageMeterLastDamageVisible',	 	DEFAULT: true},	# Damage Diff e.g. (+1490)
+	NUM_ROWS					: {KEY: 'dDamageMeterNumRows', 					DEFAULT: 3},	# Number of Rows
+	SCALE						: {KEY: 'dDamageMeterScale', 					DEFAULT: 1.0},	# Size Scale
+	FONT_STYLE_INDEX			: {KEY: 'dDamageMeterFontStyleIndex', 			DEFAULT: 0},	# Text Colors
+	BACKGROUND_VISIBLE_ON_ALT	: {KEY: 'dDamageMeterBackgroundVisibleOnAlt', 	DEFAULT: false},# Contrast Panel Visible on Alt
+	BACKGROUND_ALPHA			: {KEY: 'dDamageMeterBackgroundOpacity', 		DEFAULT: 0.4},	# Contrast Panel Alpha
 })
 
 (def constant DDM_PLAYER_INFO_WIDTH 120px)
 (def constant DDM_SHIP_NAME_WIDTH 90px)
-(def constant DDM_ROW_HEIGHT 25px)
+(def constant DDM_ROW_HEIGHT 15px)
+(def constant DDM_ROW_GAP 2px)
 
 (def constant DDM_PARAMETER_KEY 'modDetailedDamageMeterEntityIds')
 
@@ -74,12 +126,12 @@
 	(var userPrefsNum:gfx = "userPrefsComponent.userPrefs.chatBoxWidth" watch=false (event "userPrefsComponent.evUserPrefsChanged"))
 )
 
-(def macro DDM_GET_PREF_NUMBER (_varName:expression, _prefKey:expression, _default:expression="0", _offset:expression="0.0", _modifier:expression="1.0")
-	(var name="_varName" type=number value="(userPrefsNum && userPrefsNum[_prefKey] != null) ? _offset + (round(userPrefsNum[_prefKey]) * _modifier) : _default")
+(def macro DDM_GET_PREF_NUMBER (_varName:expression, _pref:expression, _offset:expression="0.0", _modifier:expression="1.0")
+	(var name="_varName" type=number value="(userPrefsNum && userPrefsNum[_pref.KEY] != null) ? _offset + (round(userPrefsNum[_pref.KEY]) * _modifier) : _pref.DEFAULT")
 )
 
-(def macro DDM_GET_PREF_BOOL (_varName:expression, _prefKey:expression, _default:expression="true")
-	(var name="_varName" type=bool value="(userPrefsNum && userPrefsNum[_prefKey] != null) ? round(userPrefsNum[_prefKey]) : _default")
+(def macro DDM_GET_PREF_BOOL (_varName:expression, _pref:expression)
+	(var name="_varName" type=bool value="(userPrefsNum && userPrefsNum[_pref.KEY] != null) ? round(userPrefsNum[_pref.KEY]) : _pref.DEFAULT")
 )
 
 (def macro DDM_GET_DAMAGELOG_ENTITY_ID(_isIncomingDamage:expression="true")
@@ -109,18 +161,17 @@
 		#Userprefs
 		(macro DDM_GET_USERPREF)
 
-		(var isVisiblePrefKey:str =  "_isIncomingDamage ? DDM_USERPREFS_KEY.INCOMING_DAMAGE_VISIBLE : DDM_USERPREFS_KEY.OUTGOING_DAMAGE_VISIBLE")
-		(var isVisibleDefault:bool = "_isIncomingDamage ? DDM_DEFAULT.INCOMING_DAMAGE_VISIBLE 		: DDM_DEFAULT.OUTGOING_DAMAGE_VISIBLE")
+		(var isVisiblePref:dict =  "_isIncomingDamage ? DDM_PREFS.INCOMING_DAMAGE_VISIBLE : DDM_PREFS.OUTGOING_DAMAGE_VISIBLE")
 
-		(macro DDM_GET_PREF_NUMBER _varName="'scale'" 			_prefKey="DDM_USERPREFS_KEY.SCALE"			_default="DDM_DEFAULT.SCALE" _modifier="0.1" _offset="0.5")
-		(macro DDM_GET_PREF_NUMBER _varName="'rowCounts'" 		_prefKey="DDM_USERPREFS_KEY.NUM_ROWS" 		_default="DDM_DEFAULT.NUM_ROWS" _offset="1")
-		(macro DDM_GET_PREF_NUMBER _varName="'fontStylePrefIndex'"	 	_prefKey="DDM_USERPREFS_KEY.FONT_STYLE_INDEX" _default="DDM_DEFAULT.FONT_STYLE_INDEX")
-		(macro DDM_GET_PREF_NUMBER _varName="'backgroundAlpha'"			_prefKey="DDM_USERPREFS_KEY.BACKGROUND_ALPHA" _default="DDM_DEFAULT.BACKGROUND_ALPHA" _modifier="0.1")
+		(macro DDM_GET_PREF_NUMBER _varName="'scale'" 				_pref="DDM_PREFS.SCALE"					_modifier="0.1" _offset="0.5")
+		(macro DDM_GET_PREF_NUMBER _varName="'rowCounts'" 			_pref="DDM_PREFS.NUM_ROWS" 				_offset="1")
+		(macro DDM_GET_PREF_NUMBER _varName="'fontStylePrefIndex'"	_pref="DDM_PREFS.FONT_STYLE_INDEX")
+		(macro DDM_GET_PREF_NUMBER _varName="'backgroundAlpha'"		_pref="DDM_PREFS.BACKGROUND_ALPHA"		_modifier="0.1")
 
-		(macro DDM_GET_PREF_BOOL _varName="'isEnabled'" 		_prefKey="isVisiblePrefKey" 				_default="isVisibleDefault")
-		(macro DDM_GET_PREF_BOOL _varName="'isVisibleOnAlt'"	_prefKey="DDM_USERPREFS_KEY.VISIBLE_ON_ALT" _default="DDM_DEFAULT.VISIBLE_ON_ALT")
-		(macro DDM_GET_PREF_BOOL _varName="'isBackgroundVisibleOnAlt'"	_prefKey="DDM_USERPREFS_KEY.BACKGROUND_VISIBLE_ON_ALT" _default="DDM_DEFAULT.BACKGROUND_VISIBLE_ON_ALT")
-		#(macro DDM_GET_PREF_BOOL _varName="'isBackgroundBlur'"			_prefKey="DDM_USERPREFS_KEY.BACKGROUND_USE_BLUR"	   _default="DDM_DEFAULT.BACKGROUND_USE_BLUR")
+		(macro DDM_GET_PREF_BOOL _varName="'isEnabled'" 			_pref="isVisiblePref")
+		(macro DDM_GET_PREF_BOOL _varName="'isVisibleOnAlt'"		_pref="DDM_PREFS.VISIBLE_ON_ALT")
+		(macro DDM_GET_PREF_BOOL _varName="'isBackgroundVisibleOnAlt'"	_pref="DDM_PREFS.BACKGROUND_VISIBLE_ON_ALT")
+		(macro DDM_GET_PREF_BOOL _varName="'isReversed'" 			_pref="DDM_PREFS.REVERSE_ROWS")
 
 		# DamageLogEntity
 		(macro DDM_GET_DAMAGELOG_ENTITY_ID _isIncomingDamage="_isIncomingDamage")
@@ -184,20 +235,24 @@
 		(block
 			(style
 				(padding = 10px)
+				(vgap = 8px)
 			)
 
+			# Header Text
 			(tf
-				(class $TextDefaultBold)
+				(class $TextDefaultBoldNM)
 				(style
 					(bind textColor "fontColor")
 				)
 				(bind text "headerText")
 			)
 
+			# Damage Rows
 			(block
 				(style
-					(vgap = -5px)
-					#(marginBottom = -5px)
+					(vgap = "DDM_ROW_GAP")
+					(bind height "rowCounts * (DDM_ROW_GAP + DDM_ROW_HEIGHT) - DDM_ROW_GAP")
+					(bind flow "isReversed ? Flow.REVERSE_VERTICAL : Flow.VERTICAL")
 				)
 				(controller $Repeat renderer='DDM_DamageMeterRowItem'
 					(bind count "rowCounts")
@@ -212,18 +267,54 @@
 
 (def element DDM_DamageMeterRowItem(_damageLogData:dict=null)
 	(scope
+		(var activeLog:bool = "$index == 0")
 	)
 
+	(bind visible "activeLog || _damageLogData ? true : false")
 	(style
-		(bind alpha "_damageLogData ? 1.0 : 0")
+		(bind alpha "activeLog && !_damageLogData ? 0 : 1.0")
+	)
+	# In order for the draggable window wdith to be fixed,
+	# At least one element needs to be visible, even if the damageLog is empty
+
+	(style
 		(height = "DDM_ROW_HEIGHT")
 		(flow = "Flow.HORIZONTAL")
 		(align = "middle|center")
+		(marginLeft = 7px)
 	)
 
+	# (block
+	# 	(class $FullsizeAbsolute)
+	# 	(style
+	# 		(backgroundColor = 0x0FFFFFFF)
+	# 	)
+	# )
+	(element DDM_RowIndexItem _index="$index")
 	(element DDM_PlayerNameAndTagItem _damageLogData="_damageLogData")
 	(element DDM_ShipInfoItem _damageLogData="_damageLogData")
-	(element DDM_DamageInfoItem _damageLogData="_damageLogData")
+	(element DDM_DamageInfoItem _damageLogData="_damageLogData" _isAnimated="activeLog")
+)
+
+(def element DDM_RowIndexItem(_index:number)
+	(scope
+		(macro DDM_GET_USERPREF)
+
+		(macro DDM_GET_PREF_BOOL 	_varName="'isRowIndexVisible'" 	_pref="DDM_PREFS.ROW_INDEX_VISIBLE")
+
+		(var indexText:str = "'' + (_index + 1) + '.'")
+	)
+
+	(bind visible "isRowIndexVisible")
+
+	(style
+		(height = 100%)
+		(align = "middle|center")
+		(alpha = "0.6")
+		(width = 22px)
+	)
+
+	(element DDM_TextItem _text="indexText" _width="100%")
 )
 
 (def element DDM_PlayerNameAndTagItem(_damageLogData:dict)
@@ -231,9 +322,9 @@
 		# Userprefs
 		(macro DDM_GET_USERPREF)
 
-		(macro DDM_GET_PREF_BOOL 	_varName="'isClanTagVisible'" 	_prefKey="DDM_USERPREFS_KEY.CLAN_TAG_VISIBLE" 	 _default="DDM_DEFAULT.CLAN_TAG_VISIBLE")
-		(macro DDM_GET_PREF_BOOL 	_varName="'isPlayerNameVisible'" 	_prefKey="DDM_USERPREFS_KEY.PLAYER_NAME_VISIBLE" _default="DDM_DEFAULT.PLAYER_NAME_VISIBLE")
-		(macro DDM_GET_PREF_NUMBER 	_varName="'widthModifier'"		_prefKey="DDM_USERPREFS_KEY.PLAYER_INFO_WIDTH" 	 _default="DDM_DEFAULT.PLAYER_INFO_WIDTH" _modifier="0.1" _offset="0.5")
+		(macro DDM_GET_PREF_BOOL 	_varName="'isClanTagVisible'" 		_pref="DDM_PREFS.CLAN_TAG_VISIBLE")
+		(macro DDM_GET_PREF_BOOL 	_varName="'isPlayerNameVisible'" 	_pref="DDM_PREFS.PLAYER_NAME_VISIBLE")
+		(macro DDM_GET_PREF_NUMBER 	_varName="'widthModifier'"			_pref="DDM_PREFS.PLAYER_INFO_WIDTH" _modifier="0.1" _offset="0.5")
 
 		# Names
 		(var playerName:str = "isPlayerNameVisible && _damageLogData ? _damageLogData.playerName : ''")
@@ -248,6 +339,7 @@
 
 	(style
 		(height = 100%)
+		(align = "middle|center")
 	)
 
 	(bind visible "isClanTagVisible || isPlayerNameVisible")
@@ -260,9 +352,10 @@
 		# Userprefs
 		(macro DDM_GET_USERPREF)
 
-		(macro DDM_GET_PREF_BOOL	_varName="'shipNameVisible'" 	_prefKey="DDM_USERPREFS_KEY.SHIP_NAME_VISIBLE" _default="DDM_DEFAULT.SHIP_NAME_VISIBLE")
-		(macro DDM_GET_PREF_BOOL 	_varName="'shipTypeVisible'" 	_prefKey="DDM_USERPREFS_KEY.SHIP_TYPE_VISIBLE" _default="DDM_DEFAULT.SHIP_TYPE_VISIBLE")
-		(macro DDM_GET_PREF_NUMBER 	_varName="'widthModifier'"		_prefKey="DDM_USERPREFS_KEY.SHIP_NAME_WIDTH"   _default="DDM_DEFAULT.SHIP_NAME_WIDTH" _modifier="0.1" _offset="0.5")
+		(macro DDM_GET_PREF_BOOL	_varName="'isShipNameVisible'" 	_pref="DDM_PREFS.SHIP_NAME_VISIBLE")
+		(macro DDM_GET_PREF_BOOL 	_varName="'isShipTypeVisible'" 	_pref="DDM_PREFS.SHIP_TYPE_VISIBLE")
+		(macro DDM_GET_PREF_NUMBER 	_varName="'widthModifier'"			_pref="DDM_PREFS.SHIP_NAME_WIDTH" _modifier="0.1" _offset="0.5")
+		(macro DDM_GET_PREF_NUMBER 	_varName="'shipTypeStylePrefIndex'"	_pref="DDM_PREFS.SHIP_TYPE_STYLE_INDEX")
 
 		# Names
 		(var shipName:str = "_damageLogData ? tr(_damageLogData.shipNameIDS) : ''")
@@ -270,34 +363,77 @@
 
 		# Width
 		(var nameWidth:number = "DDM_SHIP_NAME_WIDTH * widthModifier")
+
+		# Color
+		(var shipTypeStyleIndex:number = "shipTypeStylePrefIndex < DDM_SHIP_ICON_COLOR_PRESET.length ? shipTypeStylePrefIndex : 0")
+		(var shipTypeStyle:dict = "DDM_SHIP_ICON_COLOR_PRESET[shipTypeStyleIndex]")
+		(var shipTypeColorTransform:dict = "shipTypeStyle[shipType]")
+		(var shipIcon:str = "'url:../battle_hud/markers/ship/icon_white_' + toLower(shipType) + '.png'")
 	)
 
 	(style
 		(height = 100%)
 		(flow = "Flow.HORIZONTAL")
-		#(align = "center|middle")
+		(align = "center|middle")
 	)
 
-	(element ShipIcon _shipType="shipType"
-		(bind visible "shipTypeVisible")
+	# Ship Type
+	(block
+		(bind visible "isShipTypeVisible")
+		(style
+			(width = "SHIP_ICON_SIZE.WIDTH")
+			(height = "SHIP_ICON_SIZE.HEIGHT")
+		)
+		(block
+			# For better edge for colored icons
+			(style
+				(bind backgroundImage "shipIcon")
+			)
+		)
+		(block
+			(bind colorTransform "shipTypeColorTransform")
+			(style
+				(bind backgroundImage "shipIcon")
+			)
+		)
 	)
+
+	# Ship Name
 	(element DDM_TextItem _text="shipName" _width="nameWidth"
-		(bind visible "shipNameVisible")
+		(bind visible "isShipNameVisible")
 	)
 )
 
-(def element DDM_DamageInfoItem(_damageLogData:dict)
+(def element DDM_DamageInfoItem(_damageLogData:dict, _isAnimated:bool=false)
 	(scope
 		# Userprefs
 		(macro DDM_GET_USERPREF)
 
-		(macro DDM_GET_PREF_BOOL _varName="'lastDamageVisible'" 	_prefKey="DDM_USERPREFS_KEY.LAST_DAMAGE_VISIBLE" _default="DDM_DEFAULT.LAST_DAMAGE_VISIBLE")
+		(macro DDM_GET_PREF_BOOL _varName="'isLastDamageVisible'" 	_pref="DDM_PREFS.LAST_DAMAGE_VISIBLE")
 
 		# Damages
 		(var totalDamage:number = "_damageLogData ? _damageLogData.totalDamage : 0")
 		(var lastDamage:number = "_damageLogData ? _damageLogData.lastDamage : 0")
+
+		# Victim: this must be updated AFTER totalDamage
+		# Otherwise it will show incorrect (previous player's) damage
+		# Relying on the execution order may not be smart though
+		(var victimId:number = "_damageLogData ? _damageLogData.victimId : 0")
+		(event evPlayerChanged)
+		(dispatch evPlayerChanged args="{}" (bind trigger "victimId"))
+
+		(var animatedTotalDamage:number = "_isAnimated ? 0 : totalDamage" watch=false (event "evPlayerChanged"))
+		(controller $Animation
+			(bindcall play	duration = 0.6
+							to = "{ animatedTotalDamage: totalDamage}"
+							easing="Easing.cubic_out"
+							(bind enabled "_isAnimated")
+							(bind trigger "totalDamage")
+							(event "evPlayerChanged")
+			)
+		)
 		
-		(var totalDamageText:str = "totalDamage")
+		(var totalDamageText:str = "ceil(animatedTotalDamage)")
 		(var lastDamageText:str = "'(+' + lastDamage")
 	)
 
@@ -312,8 +448,9 @@
 		(style
 			(align = "middle|center")
 			(height = 100%)
+			(alpha = "0.6")
 		)
-		(bind visible "lastDamageVisible")
+		(bind visible "isLastDamageVisible")
 		
 		(element DDM_TextItem _text="lastDamageText" _width="60px" _textAlign="right")
 		(element DDM_AmmoIconItem _damageLogData="_damageLogData")
@@ -326,7 +463,7 @@
 		# Userprefs
 		(macro DDM_GET_USERPREF)
 
-		(macro DDM_GET_PREF_NUMBER _varName="'fontStylePrefIndex'" _prefKey="DDM_USERPREFS_KEY.FONT_STYLE_INDEX" _default="DDM_DEFAULT.FONT_STYLE_INDEX")
+		(macro DDM_GET_PREF_NUMBER _varName="'fontStylePrefIndex'" _pref="DDM_PREFS.FONT_STYLE_INDEX")
 
 		# Names
 		(var fontStyleIndex:number = "fontStylePrefIndex < DDM_FONT_COLORS.length ? fontStylePrefIndex : 0")
@@ -361,6 +498,7 @@
 		(width = 21px)
 		(height = 21px)
 		(marginTop = "-2px")
+		(backgroundSize = "fill")
 		(bind backgroundImage "weaponIconPath")
 	)
 )
