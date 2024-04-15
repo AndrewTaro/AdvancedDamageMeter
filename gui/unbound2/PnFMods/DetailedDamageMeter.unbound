@@ -134,12 +134,13 @@
 	(var name="_varName" type=bool value="(userPrefsNum && userPrefsNum[_pref.KEY] != null) ? round(userPrefsNum[_pref.KEY]) : _pref.DEFAULT")
 )
 
-(def macro DDM_GET_DAMAGELOG_ENTITY_ID(_isIncomingDamage:expression="true")
-	(var __parameterCol:gfx = "$datahub.getCollection(CC.parameter)")
-	(var __damageMeterIdsEntity:gfx = "$datahub.getPrimaryCompositeEntity(CC.parameter, 0, DDM_PARAMETER_KEY)" (event "__parameterCol.evAdded"))
-	(var __dataComponent:gfx = "__damageMeterIdsEntity && __damageMeterIdsEntity.hasComponent(CC.dataComponent) ? __damageMeterIdsEntity.dataComponent : null" (event "__damageMeterIdsEntity.evAdded"))
+(def macro DDM_GET_DAMAGELOGS_ENTITY(_isIncomingDamage:expression="true")
+	(var __damageMeterEntityWatcher:gfx = "$datahub.getPrimWatcher(CC.parameter, '0_' + DDM_PARAMETER_KEY)")
+	(var __damageMeterEntity:gfx = "__damageMeterEntityWatcher.entity" (event "__damageMeterEntityWatcher.event"))
+	(var __dataComponent:gfx = "__damageMeterEntity && __damageMeterEntity.hasComponent(CC.dataComponent) ? __damageMeterEntity.dataComponent : null" (event "__damageMeterEntity.evAdded"))
 	(var __damageLogKey:str = "_isIncomingDamage ? 'incomingDamageLogEntityId' : 'outgoingDamageLogEntityId'")
-	(var damageLogEntityId:number = "__dataComponent ? __dataComponent.data[__damageLogKey] : 0" (event "__dataComponent.evDataChanged"))
+	(var __damageLogEntityId:number = "__dataComponent ? __dataComponent.data[__damageLogKey] : 0" (event "__dataComponent.evDataChanged"))
+	(var damageLogsEntity:gfx = "$datahub.getEntity(__damageLogEntityId)")
 )
 
 (def element DDM_DetailedDamageMeter() layout=true
@@ -174,8 +175,7 @@
 		(macro DDM_GET_PREF_BOOL _varName="'isReversed'" 			_pref="DDM_PREFS.REVERSE_ROWS")
 
 		# DamageLogEntity
-		(macro DDM_GET_DAMAGELOG_ENTITY_ID _isIncomingDamage="_isIncomingDamage")
-		(var damageLogsEntity:gfx = "$datahub.getEntity(damageLogEntityId)")
+		(macro DDM_GET_DAMAGELOGS_ENTITY _isIncomingDamage="_isIncomingDamage")
 		(var dataComponent:gfx = "damageLogsEntity && damageLogsEntity.hasComponent(CC.dataComponent) ? damageLogsEntity.dataComponent : null" (event "damageLogsEntity.evAdded"))
 		(var damageLogsData:array = "dataComponent ? dataComponent.data.damageLogs : []" (event "dataComponent.evDataChanged"))
 
