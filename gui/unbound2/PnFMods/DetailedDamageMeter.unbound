@@ -134,7 +134,7 @@
 	(var name="_varName" type=bool value="(userPrefsNum && toString(userPrefsNum[_pref.KEY]) != null) ? round(userPrefsNum[_pref.KEY]) : _pref.DEFAULT")
 )
 
-(def macro DDM_GET_DAMAGELOGS_ENTITY(_isIncomingDamage:expression="true")
+(def macro DDM_GET_DAMAGELOGS_ENTITY()
 	(var __damageMeterEntityWatcher:gfx = "$datahub.getPrimWatcher(CC.parameter, '0_' + DDM_PARAMETER_KEY)")
 	(var __damageMeterEntity:gfx = "__damageMeterEntityWatcher.entity" (event "__damageMeterEntityWatcher.event"))
 	(var __dataComponent:gfx = "__damageMeterEntity && __damageMeterEntity.hasComponent(CC.dataComponent) ? __damageMeterEntity.dataComponent : null" (event "__damageMeterEntity.evAdded"))
@@ -175,7 +175,7 @@
 		(macro DDM_GET_PREF_BOOL _varName="'isReversed'" 			_pref="DDM_PREFS.REVERSE_ROWS")
 
 		# DamageLogEntity
-		(macro DDM_GET_DAMAGELOGS_ENTITY _isIncomingDamage="_isIncomingDamage")
+		(macro DDM_GET_DAMAGELOGS_ENTITY)
 		(var dataComponent:gfx = "damageLogsEntity && damageLogsEntity.hasComponent(CC.dataComponent) ? damageLogsEntity.dataComponent : null" (event "damageLogsEntity.evAdded"))
 		(var damageLogsData:array = "dataComponent ? dataComponent.data.damageLogs : []" (event "dataComponent.evDataChanged"))
 
@@ -212,13 +212,6 @@
 	)
 
 	(element ModDraggableElement _wndName="elementName" _defaults="defaultPos")
-	
-	# (element StrategicActionsBackground
-	# 	(bind visible "isBackgroundVisible && isBackgroundBlur")
-	# )
-	# (element DDM_ContrastPanel _isBlur="isBackgroundBlur" _intensity="backgroundAlpha"
-	# 	(bind visible "isBackgroundVisible")
-	# )
 
 	(block
 		(style
