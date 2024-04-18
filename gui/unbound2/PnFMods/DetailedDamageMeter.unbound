@@ -108,6 +108,7 @@
 	SHIP_TYPE_STYLE_INDEX		: {KEY: 'dDamageMeterShipTypeStyleIndex',		DEFAULT: 0},	# Ship Icon Color
 	LAST_DAMAGE_VISIBLE			: {KEY: 'dDamageMeterLastDamageVisible',	 	DEFAULT: true},	# Damage Diff e.g. (+1490)
 	NUM_ROWS					: {KEY: 'dDamageMeterNumRows', 					DEFAULT: 3},	# Number of Rows
+	ROW_HEIGHT					: {KEY: 'dDamageMeterRowHeight', 				DEFAULT: 2},	# Height of Row
 	SCALE						: {KEY: 'dDamageMeterScale', 					DEFAULT: 1.0},	# Size Scale
 	FONT_STYLE_INDEX			: {KEY: 'dDamageMeterFontStyleIndex', 			DEFAULT: 0},	# Text Colors
 	BACKGROUND_VISIBLE_ON_ALT	: {KEY: 'dDamageMeterBackgroundVisibleOnAlt', 	DEFAULT: false},# Contrast Panel Visible on Alt
@@ -166,6 +167,7 @@
 
 		(macro DDM_GET_PREF_NUMBER _varName="'scale'" 				_pref="DDM_PREFS.SCALE"					_modifier="0.1" _offset="0.5")
 		(macro DDM_GET_PREF_NUMBER _varName="'rowCounts'" 			_pref="DDM_PREFS.NUM_ROWS" 				_offset="1")
+		(macro DDM_GET_PREF_NUMBER _varName="'rowGap'" 				_pref="DDM_PREFS.ROW_HEIGHT" 			_offset="1")
 		(macro DDM_GET_PREF_NUMBER _varName="'fontStylePrefIndex'"	_pref="DDM_PREFS.FONT_STYLE_INDEX")
 		(macro DDM_GET_PREF_NUMBER _varName="'backgroundAlpha'"		_pref="DDM_PREFS.BACKGROUND_ALPHA"		_modifier="0.1")
 
@@ -228,7 +230,7 @@
 		(block
 			(style
 				(padding = 10px)
-				(vgap = 8px)
+				(bind vgap "8px + rowGap")
 			)
 
 			# Header Text
@@ -243,8 +245,8 @@
 			# Damage Rows
 			(block
 				(style
-					(vgap = "DDM_ROW_GAP")
-					(bind height "rowCounts * (DDM_ROW_GAP + DDM_ROW_HEIGHT) - DDM_ROW_GAP")
+					(bind vgap "rowGap")
+					(bind height "rowCounts * (rowGap + DDM_ROW_HEIGHT) - rowGap")
 					(bind flow "isReversed ? Flow.REVERSE_VERTICAL : Flow.VERTICAL")
 				)
 				(controller $Repeat renderer='DDM_DamageMeterRowItem'
