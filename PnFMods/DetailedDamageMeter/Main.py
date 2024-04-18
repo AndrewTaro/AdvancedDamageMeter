@@ -128,7 +128,7 @@ class DamageLogsController(object):
             damageLog['totalDamage'] += currentLogs[0]['totalDamage']
             currentLogs[0] = damageLog
         else:
-            if len(currentLogs) >= MAX_LOGS_COUNT - 1:
+            if len(currentLogs) >= MAX_LOGS_COUNT:
                 currentLogs.pop()
             currentLogs.insert(0, damageLog)
         # 
