@@ -1,6 +1,6 @@
 API_VERSION = 'API_v1.0'
 
-MOD_NAME = 'DetailedDamageMeter'
+MOD_NAME = 'AdvancedDamageMeter'
 
 try:
     import battle, events, ui
@@ -8,7 +8,7 @@ except:
     pass
 
 MAX_LOGS_COUNT = 10
-PARAMETER_ID = 'modDetailedDamageMeterEntityIds'
+PARAMETER_ID = 'modAdvancedDamageMeterEntityIds'
 
 AMMO_TYPE_TO_ICON_NAME = {
     'AP': 'main_caliber',
@@ -28,7 +28,7 @@ AMMO_TYPE_TO_ICON_NAME = {
 }
 
 
-class DetailedDamageMeter(object):
+class AdvancedDamageMeter(object):
 
     def __init__(self):
         events.onReceiveShellInfo(self.onReceiveShellInfo)
@@ -164,4 +164,4 @@ class DamageLogsController(object):
         self._damageLogs = None
 
 
-detailedDamageMeter = DetailedDamageMeter()
+advancedDamageMeter = AdvancedDamageMeter()
