@@ -1,4 +1,4 @@
-# Detailed Damage Meter
+# Advanced Damage Meter
 This modification records the history of received and caused damage.  
 This is a reworked version of the Damage Meter by [Monstrofil](https://github.com/Monstrofil), with the original author's permission.
 
