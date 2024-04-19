@@ -3,16 +3,16 @@
 		<root_Node>
 			<find_Node tag="elementList">
 				<insert>
-					<element class="lesta.unbound2.UbElement" elementName="DDM_DetailedDamageMeter" name="unbound2DetailedDamageMeter">
+					<element class="lesta.unbound2.UbElement" elementName="ADM_AdvancedDamageMeter" name="unbound2AdvancedDamageMeter">
 						<properties hitTest="true"/>
 					</element>
 					<attrs>
-						<do_if_not_exist tag="element" type="name" name="unbound2DetailedDamageMeter"/>
+						<do_if_not_exist tag="element" type="name" name="unbound2AdvancedDamageMeter"/>
 						<position insert="after_node" tag="element" attr_1="elementName" value_1="MainHud"/>
 					</attrs>
 				</insert>
 			</find_Node>
 		</root_Node>
 	</target_File>
-	<check name="DetailedDamageMeter" version="1.1.0"/>
+	<check name="AdvancedDamageMeter" version="1.1.0"/>
 </code>
