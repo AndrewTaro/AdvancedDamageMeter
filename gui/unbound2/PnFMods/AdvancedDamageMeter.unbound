@@ -94,6 +94,7 @@
 ])
 
 (def constant ADM_PREFS {
+	DISABLE_DRAGDROP			: {KEY: 'dDamageMeterDisableDragDrop', 			DEFAULT: false},# Disable Drag-Drop (Lock Position)
 	INCOMING_DAMAGE_VISIBLE		: {KEY: 'dDamageMeterIncomingDamageVisible', 	DEFAULT: true},	# Incoming Damage
 	OUTGOING_DAMAGE_VISIBLE		: {KEY: 'dDamageMeterOutgoingDamageVisible', 	DEFAULT: true},	# Outgoing Damage
 	VISIBLE_ON_ALT				: {KEY: 'dDamageMeterVisibleOnAlt',				DEFAULT: false},# Visible Only on Alt Key
@@ -175,6 +176,7 @@
 		(macro ADM_GET_PREF_BOOL _varName="'isVisibleOnAlt'"		_pref="ADM_PREFS.VISIBLE_ON_ALT")
 		(macro ADM_GET_PREF_BOOL _varName="'isBackgroundVisibleOnAlt'"	_pref="ADM_PREFS.BACKGROUND_VISIBLE_ON_ALT")
 		(macro ADM_GET_PREF_BOOL _varName="'isReversed'" 			_pref="ADM_PREFS.REVERSE_ROWS")
+		(macro ADM_GET_PREF_BOOL _varName="'isPositionLocked'"		_pref="ADM_PREFS.DISABLE_DRAGDROP")
 
 		# DamageLogEntity
 		(macro ADM_GET_DAMAGELOGS_ENTITY)
@@ -213,7 +215,14 @@
 		(bind scaleY "scale")
 	)
 
-	(element ModDraggableElement _wndName="elementName" _defaults="defaultPos")
+	(controller $Instance renderer='ModDraggableElement'
+		(bind enabled "!isPositionLocked")
+		(args
+			_wndName="elementName"
+			_defaults="defaultPos"
+		)
+	)
+	#(element ModDraggableElement _wndName="elementName" _defaults="defaultPos")
 
 	(block
 		(style
