@@ -102,18 +102,18 @@
 	ROW_INDEX_VISIBLE			: {KEY: 'dDamageMeterRowIndexVisible',			DEFAULT: true},	# Row Index
 	CLAN_TAG_VISIBLE			: {KEY: 'dDamageMeterClanTagVisible',			DEFAULT: false},# Clan Tag
 	PLAYER_NAME_VISIBLE			: {KEY: 'dDamageMeterPlayerNameVisible',		DEFAULT: true}, # Player Name
-	PLAYER_INFO_WIDTH			: {KEY: 'dDamageMeterPlayerInfoWidth', 			DEFAULT: 1.0},	# Name Width
+	PLAYER_INFO_WIDTH			: {KEY: 'dDamageMeterPlayerInfoWidth', 			DEFAULT: 1.0,	MODIFIER: 0.1,	OFFSET: 0.5},	# Name Width
 	SHIP_NAME_VISIBLE			: {KEY: 'dDamageMeterShipNameVisible', 			DEFAULT: true},	# Ship Name
-	SHIP_NAME_WIDTH				: {KEY: 'dDamageMeterShipInfoWidth', 			DEFAULT: 1.0},	# Ship Name Width
+	SHIP_NAME_WIDTH				: {KEY: 'dDamageMeterShipInfoWidth', 			DEFAULT: 1.0,	MODIFIER: 0.1,	OFFSET: 0.5},	# Ship Name Width
 	SHIP_TYPE_VISIBLE			: {KEY: 'dDamageMeterShipTypeVisible', 			DEFAULT: true},	# Ship Icon
-	SHIP_TYPE_STYLE_INDEX		: {KEY: 'dDamageMeterShipTypeStyleIndex',		DEFAULT: 0},	# Ship Icon Color
+	SHIP_TYPE_STYLE_INDEX		: {KEY: 'dDamageMeterShipTypeStyleIndex',		DEFAULT: 0,		MODIFIER: 1,	OFFSET: 0},	# Ship Icon Color
 	LAST_DAMAGE_VISIBLE			: {KEY: 'dDamageMeterLastDamageVisible',	 	DEFAULT: true},	# Damage Diff e.g. (+1490)
-	NUM_ROWS					: {KEY: 'dDamageMeterNumRows', 					DEFAULT: 3},	# Number of Rows
-	ROW_HEIGHT					: {KEY: 'dDamageMeterRowHeight', 				DEFAULT: 2},	# Height of Row
-	SCALE						: {KEY: 'dDamageMeterScale', 					DEFAULT: 1.0},	# Size Scale
-	FONT_STYLE_INDEX			: {KEY: 'dDamageMeterFontStyleIndex', 			DEFAULT: 0},	# Text Colors
+	NUM_ROWS					: {KEY: 'dDamageMeterNumRows', 					DEFAULT: 3,		MODIFIER: 1,	OFFSET: 1},	# Number of Rows
+	ROW_HEIGHT					: {KEY: 'dDamageMeterRowHeight', 				DEFAULT: 2,		MODIFIER: 1,	OFFSET: 1},	# Height of Row
+	SCALE						: {KEY: 'dDamageMeterScale', 					DEFAULT: 1.0,	MODIFIER: 0.1,	OFFSET: 0.5},	# Size Scale
+	FONT_STYLE_INDEX			: {KEY: 'dDamageMeterFontStyleIndex', 			DEFAULT: 0,		MODIFIER: 1,	OFFSET: 0},	# Text Colors
 	BACKGROUND_VISIBLE_ON_ALT	: {KEY: 'dDamageMeterBackgroundVisibleOnAlt', 	DEFAULT: false},# Contrast Panel Visible on Alt
-	BACKGROUND_ALPHA			: {KEY: 'dDamageMeterBackgroundOpacity', 		DEFAULT: 0.4},	# Contrast Panel Alpha
+	BACKGROUND_ALPHA			: {KEY: 'dDamageMeterBackgroundOpacity', 		DEFAULT: 0.4,	MODIFIER: 0.1,	OFFSET: 0},	# Contrast Panel Alpha
 })
 
 (def constant ADM_PLAYER_INFO_WIDTH 120px)
@@ -128,12 +128,12 @@
 	(var userPrefsNum:gfx = "userPrefsComponent.userPrefs.chatBoxWidth" watch=false (event "userPrefsComponent.evUserPrefsChanged"))
 )
 
-(def macro ADM_GET_PREF_NUMBER (_varName:expression, _pref:expression, _offset:expression="0.0", _modifier:expression="1.0")
-	(var name="_varName" type=number value="(userPrefsNum && toString(userPrefsNum[_pref.KEY]) != null) ? _offset + (round(userPrefsNum[_pref.KEY]) * _modifier) : _pref.DEFAULT")
+(def macro ADM_GET_PREF_NUMBER (_varName:expression, _pref:expression)
+	(var name="_varName" type=number value="userPrefsNum && isNumber(userPrefsNum[_pref.KEY]) ? _pref.OFFSET + (round(userPrefsNum[_pref.KEY]) * _pref.MODIFIER) : _pref.DEFAULT")
 )
 
 (def macro ADM_GET_PREF_BOOL (_varName:expression, _pref:expression)
-	(var name="_varName" type=bool value="(userPrefsNum && toString(userPrefsNum[_pref.KEY]) != null) ? round(userPrefsNum[_pref.KEY]) : _pref.DEFAULT")
+	(var name="_varName" type=bool value="userPrefsNum && isNumber(userPrefsNum[_pref.KEY]) ? round(userPrefsNum[_pref.KEY]) : _pref.DEFAULT")
 )
 
 (def macro ADM_GET_DAMAGELOGS_ENTITY()
@@ -166,11 +166,11 @@
 
 		(var isVisiblePref:dict =  "_isIncomingDamage ? ADM_PREFS.INCOMING_DAMAGE_VISIBLE : ADM_PREFS.OUTGOING_DAMAGE_VISIBLE")
 
-		(macro ADM_GET_PREF_NUMBER _varName="'scale'" 				_pref="ADM_PREFS.SCALE"					_modifier="0.1" _offset="0.5")
-		(macro ADM_GET_PREF_NUMBER _varName="'rowCounts'" 			_pref="ADM_PREFS.NUM_ROWS" 				_offset="1")
-		(macro ADM_GET_PREF_NUMBER _varName="'rowGap'" 				_pref="ADM_PREFS.ROW_HEIGHT" 			_offset="1")
+		(macro ADM_GET_PREF_NUMBER _varName="'scale'" 				_pref="ADM_PREFS.SCALE")
+		(macro ADM_GET_PREF_NUMBER _varName="'rowCounts'" 			_pref="ADM_PREFS.NUM_ROWS")
+		(macro ADM_GET_PREF_NUMBER _varName="'rowGap'" 				_pref="ADM_PREFS.ROW_HEIGHT")
 		(macro ADM_GET_PREF_NUMBER _varName="'fontStylePrefIndex'"	_pref="ADM_PREFS.FONT_STYLE_INDEX")
-		(macro ADM_GET_PREF_NUMBER _varName="'backgroundAlpha'"		_pref="ADM_PREFS.BACKGROUND_ALPHA"		_modifier="0.1")
+		(macro ADM_GET_PREF_NUMBER _varName="'backgroundAlpha'"		_pref="ADM_PREFS.BACKGROUND_ALPHA")
 
 		(macro ADM_GET_PREF_BOOL _varName="'isEnabled'" 			_pref="isVisiblePref")
 		(macro ADM_GET_PREF_BOOL _varName="'isVisibleOnAlt'"		_pref="ADM_PREFS.VISIBLE_ON_ALT")
@@ -328,7 +328,7 @@
 
 		(macro ADM_GET_PREF_BOOL 	_varName="'isClanTagVisible'" 		_pref="ADM_PREFS.CLAN_TAG_VISIBLE")
 		(macro ADM_GET_PREF_BOOL 	_varName="'isPlayerNameVisible'" 	_pref="ADM_PREFS.PLAYER_NAME_VISIBLE")
-		(macro ADM_GET_PREF_NUMBER 	_varName="'widthModifier'"			_pref="ADM_PREFS.PLAYER_INFO_WIDTH" _modifier="0.1" _offset="0.5")
+		(macro ADM_GET_PREF_NUMBER 	_varName="'widthModifier'"			_pref="ADM_PREFS.PLAYER_INFO_WIDTH")
 
 		# Names
 		(var playerName:str = "isPlayerNameVisible && _damageLogData ? _damageLogData.playerName : ''")
@@ -358,7 +358,7 @@
 
 		(macro ADM_GET_PREF_BOOL	_varName="'isShipNameVisible'" 	_pref="ADM_PREFS.SHIP_NAME_VISIBLE")
 		(macro ADM_GET_PREF_BOOL 	_varName="'isShipTypeVisible'" 	_pref="ADM_PREFS.SHIP_TYPE_VISIBLE")
-		(macro ADM_GET_PREF_NUMBER 	_varName="'widthModifier'"			_pref="ADM_PREFS.SHIP_NAME_WIDTH" _modifier="0.1" _offset="0.5")
+		(macro ADM_GET_PREF_NUMBER 	_varName="'widthModifier'"			_pref="ADM_PREFS.SHIP_NAME_WIDTH")
 		(macro ADM_GET_PREF_NUMBER 	_varName="'shipTypeStylePrefIndex'"	_pref="ADM_PREFS.SHIP_TYPE_STYLE_INDEX")
 
 		# Names
