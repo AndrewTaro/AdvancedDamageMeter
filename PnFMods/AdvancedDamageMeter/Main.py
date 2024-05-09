@@ -44,6 +44,16 @@ class AdvancedDamageMeter(object):
         shooter = battle.getPlayerByVehicleId(shooterId)
         player = battle.getSelfPlayerInfo()
 
+        if victim is None or shooter is None:
+            # Fortress/Airfields in Scenario mode:
+            # PlayersInfo for these structures is None
+            # 
+            # Showing damage to them is possible, but
+            # Their names are not accessible from Python API
+            #
+            # ToDo: Pass the entity ID to Unbound and let datahub search for the player/building and tags
+            return
+
         damagedPlayer = shooter if player.shipId == victim.shipId else victim
         damageLog = self.__getDamageLog(ammoId, damage, damagedPlayer)
 
