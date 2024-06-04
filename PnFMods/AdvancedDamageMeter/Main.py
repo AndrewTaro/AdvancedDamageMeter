@@ -8,7 +8,9 @@ except:
     pass
 
 MAX_LOGS_COUNT = 10
-PARAMETER_ID = 'modAdvancedDamageMeterEntityIds'
+
+COMPONENT_KEY_INCOMING = 'modAdvancedDamageMeterIncomingDamage'
+COMPONENT_KEY_OUTGOING = 'modAdvancedDamageMeterOutgoingDamage'
 
 AMMO_TYPE_TO_ICON_NAME = {
     'AP': 'main_caliber',
@@ -106,15 +108,8 @@ class AdvancedDamageMeter(object):
         return AMMO_TYPE_TO_ICON_NAME.get(ammoType, None)
 
     def onBattleStart(self):
-        self.incomingDamageLogs = DamageLogsController()
-        self.outgoingDamageLogs = DamageLogsController()
-
-        incomingEntityId = self.incomingDamageLogs.damageLogEntityId
-        outgoingEntityId = self.outgoingDamageLogs.damageLogEntityId
-
-        self.parameterEntityId = ui.createUiElement()
-        ui.addDataComponent(self.parameterEntityId, {'data': {'outgoingDamageLogEntityId': outgoingEntityId, 'incomingDamageLogEntityId': incomingEntityId}})
-        ui.addParameterComponent(self.parameterEntityId, PARAMETER_ID)
+        self.incomingDamageLogs = DamageLogsController(isIncomingDamage=True)
+        self.outgoingDamageLogs = DamageLogsController(isIncomingDamage=False)
 
     def onBattleQuit(self, arg):
         """
@@ -122,14 +117,16 @@ class AdvancedDamageMeter(object):
         :return:
         """
         self.incomingDamageLogs.kill()
+        self.incomingDamageLogs = None
         self.outgoingDamageLogs.kill()
-        ui.deleteUiElement(self.parameterEntityId)
+        self.outgoingDamageLogs = None
 
 
 class DamageLogsController(object):
-    def __init__(self):
+    def __init__(self, isIncomingDamage=True):
+        key = COMPONENT_KEY_INCOMING if isIncomingDamage else COMPONENT_KEY_OUTGOING
         self.damageLogEntityId = ui.createUiElement()
-        ui.addDataComponent(self.damageLogEntityId, {'data': {'damageLogs': []}})
+        ui.addDataComponentWithId(self.damageLogEntityId, key, {'damageLogs': []})
         self._damageLogs = []
 
     def update(self, damageLog):
@@ -141,33 +138,7 @@ class DamageLogsController(object):
             if len(currentLogs) >= MAX_LOGS_COUNT:
                 currentLogs.pop()
             currentLogs.insert(0, damageLog)
-        # 
-        # If you are reading this and trying to copy paste my code
-        # Be careful with how objects in DH component are updated
-        # 
-        # Changes to objects (list, dict, etc) in DH component will not be reflected to Unbound Datahub when the memory address remains the same.
-        #
-        # e.g.
-        #
-        # initdict = {}
-        # id(initdict) #>> 0L
-        # ui.addDataComponent(entityId, {'data': initdict})
-        # #>> This will be reflected to Ub Datahub
-        #
-        # somedict = {'key': 'value'}
-        # id(somedict) #>> 1L
-        # ui.updateUiElementData(entityId, {'data': somedict})
-        # #>> This change proeprly triggers dataComponent.evDataChanged event. Because target object's memory address is differnt. (0L => 1L)
-        # 
-        # somedict['key'] = 'changedvalue'
-        # id(somedict) #>> still 1L
-        # ui.updateUiElementData(entityId, {'data': somedict})
-        # #>> However, this does not trigger evDataChanged, because the address on memory remains unchanged.
-        #
-        # Thus, you must create a new instance of the object in order to trigger the update event.
-        # This behavior applies recursively. So objects within another object (in this mod's case, damageLog dicts in list) also need to be on new memory address.
-        #
-        ui.updateUiElementData(self.damageLogEntityId, {'data': {'damageLogs': list(currentLogs)}})
+        ui.updateUiElementData(self.damageLogEntityId, {'damageLogs': list(currentLogs)})
 
     def kill(self):
         ui.deleteUiElement(self.damageLogEntityId)
