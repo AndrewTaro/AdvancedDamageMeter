@@ -265,6 +265,13 @@
 			)
 		)
 	)
+
+	# Mod Config
+	(element TT_ConfigButtonElement _modIndex = "8"
+		(style
+			(left = -30px)
+		)
+	)
 )
 
 (def element ADM_DamageMeterRowItem(_damageLogData:dict=null)
