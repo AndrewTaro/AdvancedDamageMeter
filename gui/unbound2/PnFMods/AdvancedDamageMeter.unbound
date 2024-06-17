@@ -209,57 +209,62 @@
 		(position = "absolute")
 		(bind left "dragPosX")
 		(bind top "dragPosY")
-		(bind scaleX "scale")
-		(bind scaleY "scale")
 	)
-
-	(controller $Instance renderer='ModDraggableElement'
-		(bind enabled "!isPositionLocked")
-		(args
-			_wndName="elementName"
-			_defaults="defaultPos"
-		)
-	)
-	#(element ModDraggableElement _wndName="elementName" _defaults="defaultPos")
 
 	(block
 		(style
-			(hitTest = false)
+			(bind scaleX "scale")
+			(bind scaleY "scale")
 		)
-		(mc contrast_panel
-			(class $FullsizeAbsolute)
-			(bind visible "isBackgroundVisible")
-			(style
-				(bind alpha "backgroundAlpha")
+
+		(controller $Instance renderer='ModDraggableElement'
+			(bind enabled "!isPositionLocked")
+			(args
+				_wndName="elementName"
+				_defaults="defaultPos"
 			)
 		)
+		#(element ModDraggableElement _wndName="elementName" _defaults="defaultPos")
 
 		(block
 			(style
-				(padding = 10px)
-				(bind vgap "8px + rowGap")
+				(hitTest = false)
 			)
-
-			# Header Text
-			(tf
-				(class $TextDefaultBoldNM)
+			(mc contrast_panel
+				(class $FullsizeAbsolute)
+				(bind visible "isBackgroundVisible")
 				(style
-					(bind textColor "fontColor")
+					(bind alpha "backgroundAlpha")
 				)
-				(bind text "headerText")
 			)
 
-			# Damage Rows
 			(block
 				(style
-					(bind vgap "rowGap")
-					(bind height "rowCounts * (rowGap + ADM_ROW_HEIGHT) - rowGap")
-					(bind flow "isReversed ? Flow.REVERSE_VERTICAL : Flow.VERTICAL")
+					(padding = 10px)
+					(bind vgap "8px + rowGap")
 				)
-				(controller $Repeat renderer='ADM_DamageMeterRowItem'
-					(bind count "rowCounts")
-					(args
-						_damageLogData="damageLogs[$index]"
+
+				# Header Text
+				(tf
+					(class $TextDefaultBoldNM)
+					(style
+						(bind textColor "fontColor")
+					)
+					(bind text "headerText")
+				)
+
+				# Damage Rows
+				(block
+					(style
+						(bind vgap "rowGap")
+						(bind height "rowCounts * (rowGap + ADM_ROW_HEIGHT) - rowGap")
+						(bind flow "isReversed ? Flow.REVERSE_VERTICAL : Flow.VERTICAL")
+					)
+					(controller $Repeat renderer='ADM_DamageMeterRowItem'
+						(bind count "rowCounts")
+						(args
+							_damageLogData="damageLogs[$index]"
+						)
 					)
 				)
 			)
