@@ -114,12 +114,16 @@ class AdvancedDamageMeter(object):
     def onBattleQuit(self, arg):
         """
         Called when player leaves battle. Clean damage info here.
-        :return:
+
+        Can be called when existing the game without battle!
         """
-        self.incomingDamageLogs.kill()
-        self.incomingDamageLogs = None
-        self.outgoingDamageLogs.kill()
-        self.outgoingDamageLogs = None
+        try:
+            self.incomingDamageLogs.kill()
+            self.incomingDamageLogs = None
+            self.outgoingDamageLogs.kill()
+            self.outgoingDamageLogs = None
+        except:
+            pass
 
 
 class DamageLogsController(object):
