@@ -93,29 +93,6 @@
 	},
 ])
 
-(def constant ADM_PREFS {
-	DISABLE_DRAGDROP			: {KEY: 'dDamageMeterDisableDragDrop', 			DEFAULT: false},# Disable Drag-Drop (Lock Position)
-	INCOMING_DAMAGE_VISIBLE		: {KEY: 'dDamageMeterIncomingDamageVisible', 	DEFAULT: true},	# Incoming Damage
-	OUTGOING_DAMAGE_VISIBLE		: {KEY: 'dDamageMeterOutgoingDamageVisible', 	DEFAULT: true},	# Outgoing Damage
-	VISIBLE_ON_ALT				: {KEY: 'dDamageMeterVisibleOnAlt',				DEFAULT: false},# Visible Only on Alt Key
-	REVERSE_ROWS				: {KEY: 'dDamageMeterReverseRows',				DEFAULT: false},# Reverse Row Prder
-	ROW_INDEX_VISIBLE			: {KEY: 'dDamageMeterRowIndexVisible',			DEFAULT: true},	# Row Index
-	CLAN_TAG_VISIBLE			: {KEY: 'dDamageMeterClanTagVisible',			DEFAULT: false},# Clan Tag
-	PLAYER_NAME_VISIBLE			: {KEY: 'dDamageMeterPlayerNameVisible',		DEFAULT: true}, # Player Name
-	PLAYER_INFO_WIDTH			: {KEY: 'dDamageMeterPlayerInfoWidth', 			DEFAULT: 1.0,	MODIFIER: 0.1,	OFFSET: 0.5},	# Name Width
-	SHIP_NAME_VISIBLE			: {KEY: 'dDamageMeterShipNameVisible', 			DEFAULT: true},	# Ship Name
-	SHIP_NAME_WIDTH				: {KEY: 'dDamageMeterShipInfoWidth', 			DEFAULT: 1.0,	MODIFIER: 0.1,	OFFSET: 0.5},	# Ship Name Width
-	SHIP_TYPE_VISIBLE			: {KEY: 'dDamageMeterShipTypeVisible', 			DEFAULT: true},	# Ship Icon
-	SHIP_TYPE_STYLE_INDEX		: {KEY: 'dDamageMeterShipTypeStyleIndex',		DEFAULT: 0,		MODIFIER: 1,	OFFSET: 0},	# Ship Icon Color
-	LAST_DAMAGE_VISIBLE			: {KEY: 'dDamageMeterLastDamageVisible',	 	DEFAULT: true},	# Damage Diff e.g. (+1490)
-	NUM_ROWS					: {KEY: 'dDamageMeterNumRows', 					DEFAULT: 3,		MODIFIER: 1,	OFFSET: 1},	# Number of Rows
-	ROW_HEIGHT					: {KEY: 'dDamageMeterRowHeight', 				DEFAULT: 2,		MODIFIER: 1,	OFFSET: 1},	# Height of Row
-	SCALE						: {KEY: 'dDamageMeterScale', 					DEFAULT: 1.0,	MODIFIER: 0.1,	OFFSET: 0.5},	# Size Scale
-	FONT_STYLE_INDEX			: {KEY: 'dDamageMeterFontStyleIndex', 			DEFAULT: 0,		MODIFIER: 1,	OFFSET: 0},	# Text Colors
-	BACKGROUND_VISIBLE_ON_ALT	: {KEY: 'dDamageMeterBackgroundVisibleOnAlt', 	DEFAULT: false},# Contrast Panel Visible on Alt
-	BACKGROUND_ALPHA			: {KEY: 'dDamageMeterBackgroundOpacity', 		DEFAULT: 0.4,	MODIFIER: 0.1,	OFFSET: 0},	# Contrast Panel Alpha
-})
-
 (def constant ADM_PLAYER_INFO_WIDTH 120px)
 (def constant ADM_SHIP_NAME_WIDTH 90px)
 (def constant ADM_ROW_HEIGHT 15px)
@@ -123,19 +100,6 @@
 
 (def constant ADM_INCOMING_LOGS_KEY 'modAdvancedDamageMeterIncomingDamage')
 (def constant ADM_OUTGOING_LOGS_KEY 'modAdvancedDamageMeterOutgoingDamage')
-
-(def macro ADM_GET_USERPREF()
-	(var userPrefsComponent:gfx = "$datahub.getSingleComponent(CC.userPrefs)")
-	(var userPrefsNum:gfx = "userPrefsComponent.userPrefs.chatBoxWidth" watch=false (event "userPrefsComponent.evUserPrefsChanged"))
-)
-
-(def macro ADM_GET_PREF_NUMBER (_varName:expression, _pref:expression)
-	(var name="_varName" type=number value="userPrefsNum && isNumber(userPrefsNum[_pref.KEY]) ? _pref.OFFSET + (round(userPrefsNum[_pref.KEY]) * _pref.MODIFIER) : _pref.DEFAULT")
-)
-
-(def macro ADM_GET_PREF_BOOL (_varName:expression, _pref:expression)
-	(var name="_varName" type=bool value="userPrefsNum && isNumber(userPrefsNum[_pref.KEY]) ? round(userPrefsNum[_pref.KEY]) : _pref.DEFAULT")
-)
 
 (def macro ADM_GET_DAMAGELOGS()
 	(var __damageLogKey:str = "_isIncomingDamage ? ADM_INCOMING_LOGS_KEY : ADM_OUTGOING_LOGS_KEY")
@@ -162,21 +126,21 @@
 (def element ADM_DamageMeterItem(_isIncomingDamage:bool=true)
 	(scope
 		#Userprefs
-		(macro ADM_GET_USERPREF)
+		(macro TT_GET_USERPREF)
 
 		(var isVisiblePref:dict =  "_isIncomingDamage ? ADM_PREFS.INCOMING_DAMAGE_VISIBLE : ADM_PREFS.OUTGOING_DAMAGE_VISIBLE")
 
-		(macro ADM_GET_PREF_NUMBER _varName="'scale'" 				_pref="ADM_PREFS.SCALE")
-		(macro ADM_GET_PREF_NUMBER _varName="'rowCounts'" 			_pref="ADM_PREFS.NUM_ROWS")
-		(macro ADM_GET_PREF_NUMBER _varName="'rowGap'" 				_pref="ADM_PREFS.ROW_HEIGHT")
-		(macro ADM_GET_PREF_NUMBER _varName="'fontStylePrefIndex'"	_pref="ADM_PREFS.FONT_STYLE_INDEX")
-		(macro ADM_GET_PREF_NUMBER _varName="'backgroundAlpha'"		_pref="ADM_PREFS.BACKGROUND_ALPHA")
+		(macro TT_GET_PREF_NUMBER _varName="'scale'" 				_pref="ADM_PREFS.SCALE")
+		(macro TT_GET_PREF_NUMBER _varName="'rowCounts'" 			_pref="ADM_PREFS.NUM_ROWS")
+		(macro TT_GET_PREF_NUMBER _varName="'rowGap'" 				_pref="ADM_PREFS.ROW_HEIGHT")
+		(macro TT_GET_PREF_NUMBER _varName="'fontStylePrefIndex'"	_pref="ADM_PREFS.FONT_STYLE_INDEX")
+		(macro TT_GET_PREF_NUMBER _varName="'backgroundAlpha'"		_pref="ADM_PREFS.BACKGROUND_ALPHA")
 
-		(macro ADM_GET_PREF_BOOL _varName="'isEnabled'" 			_pref="isVisiblePref")
-		(macro ADM_GET_PREF_BOOL _varName="'isVisibleOnAlt'"		_pref="ADM_PREFS.VISIBLE_ON_ALT")
-		(macro ADM_GET_PREF_BOOL _varName="'isBackgroundVisibleOnAlt'"	_pref="ADM_PREFS.BACKGROUND_VISIBLE_ON_ALT")
-		(macro ADM_GET_PREF_BOOL _varName="'isReversed'" 			_pref="ADM_PREFS.REVERSE_ROWS")
-		(macro ADM_GET_PREF_BOOL _varName="'isPositionLocked'"		_pref="ADM_PREFS.DISABLE_DRAGDROP")
+		(macro TT_GET_PREF_BOOL _varName="'isEnabled'" 			_pref="isVisiblePref")
+		(macro TT_GET_PREF_BOOL _varName="'isVisibleOnAlt'"		_pref="ADM_PREFS.VISIBLE_ON_ALT")
+		(macro TT_GET_PREF_BOOL _varName="'isBackgroundVisibleOnAlt'"	_pref="ADM_PREFS.BACKGROUND_VISIBLE_ON_ALT")
+		(macro TT_GET_PREF_BOOL _varName="'isReversed'" 			_pref="ADM_PREFS.REVERSE_ROWS")
+		(macro TT_GET_PREF_BOOL _varName="'isPositionLocked'"		_pref="ADM_PREFS.DISABLE_DRAGDROP")
 
 		# DamageLogEntity
 		(macro ADM_GET_DAMAGELOGS)
@@ -312,9 +276,9 @@
 
 (def element ADM_RowIndexItem(_index:number)
 	(scope
-		(macro ADM_GET_USERPREF)
+		(macro TT_GET_USERPREF)
 
-		(macro ADM_GET_PREF_BOOL 	_varName="'isRowIndexVisible'" 	_pref="ADM_PREFS.ROW_INDEX_VISIBLE")
+		(macro TT_GET_PREF_BOOL 	_varName="'isRowIndexVisible'" 	_pref="ADM_PREFS.ROW_INDEX_VISIBLE")
 
 		(var indexText:str = "'' + (_index + 1) + '.'")
 	)
@@ -334,11 +298,11 @@
 (def element ADM_PlayerNameAndTagItem(_damageLogData:dict)
 	(scope
 		# Userprefs
-		(macro ADM_GET_USERPREF)
+		(macro TT_GET_USERPREF)
 
-		(macro ADM_GET_PREF_BOOL 	_varName="'isClanTagVisible'" 		_pref="ADM_PREFS.CLAN_TAG_VISIBLE")
-		(macro ADM_GET_PREF_BOOL 	_varName="'isPlayerNameVisible'" 	_pref="ADM_PREFS.PLAYER_NAME_VISIBLE")
-		(macro ADM_GET_PREF_NUMBER 	_varName="'widthModifier'"			_pref="ADM_PREFS.PLAYER_INFO_WIDTH")
+		(macro TT_GET_PREF_BOOL 	_varName="'isClanTagVisible'" 		_pref="ADM_PREFS.CLAN_TAG_VISIBLE")
+		(macro TT_GET_PREF_BOOL 	_varName="'isPlayerNameVisible'" 	_pref="ADM_PREFS.PLAYER_NAME_VISIBLE")
+		(macro TT_GET_PREF_NUMBER 	_varName="'widthModifier'"			_pref="ADM_PREFS.PLAYER_INFO_WIDTH")
 
 		# Names
 		(var playerName:str = "isPlayerNameVisible && _damageLogData ? _damageLogData.playerName : ''")
@@ -364,12 +328,12 @@
 (def element ADM_ShipInfoItem(_damageLogData:dict)
 	(scope
 		# Userprefs
-		(macro ADM_GET_USERPREF)
+		(macro TT_GET_USERPREF)
 
-		(macro ADM_GET_PREF_BOOL	_varName="'isShipNameVisible'" 	_pref="ADM_PREFS.SHIP_NAME_VISIBLE")
-		(macro ADM_GET_PREF_BOOL 	_varName="'isShipTypeVisible'" 	_pref="ADM_PREFS.SHIP_TYPE_VISIBLE")
-		(macro ADM_GET_PREF_NUMBER 	_varName="'widthModifier'"			_pref="ADM_PREFS.SHIP_NAME_WIDTH")
-		(macro ADM_GET_PREF_NUMBER 	_varName="'shipTypeStylePrefIndex'"	_pref="ADM_PREFS.SHIP_TYPE_STYLE_INDEX")
+		(macro TT_GET_PREF_BOOL	_varName="'isShipNameVisible'" 	_pref="ADM_PREFS.SHIP_NAME_VISIBLE")
+		(macro TT_GET_PREF_BOOL 	_varName="'isShipTypeVisible'" 	_pref="ADM_PREFS.SHIP_TYPE_VISIBLE")
+		(macro TT_GET_PREF_NUMBER 	_varName="'widthModifier'"			_pref="ADM_PREFS.SHIP_NAME_WIDTH")
+		(macro TT_GET_PREF_NUMBER 	_varName="'shipTypeStylePrefIndex'"	_pref="ADM_PREFS.SHIP_TYPE_STYLE_INDEX")
 
 		# Names
 		(var shipName:str = "_damageLogData ? tr(_damageLogData.shipNameIDS) : ''")
@@ -421,9 +385,9 @@
 (def element ADM_DamageInfoItem(_damageLogData:dict, _isAnimated:bool=false)
 	(scope
 		# Userprefs
-		(macro ADM_GET_USERPREF)
+		(macro TT_GET_USERPREF)
 
-		(macro ADM_GET_PREF_BOOL _varName="'isLastDamageVisible'" 	_pref="ADM_PREFS.LAST_DAMAGE_VISIBLE")
+		(macro TT_GET_PREF_BOOL _varName="'isLastDamageVisible'" 	_pref="ADM_PREFS.LAST_DAMAGE_VISIBLE")
 
 		# Damages
 		(var totalDamage:number = "_damageLogData ? _damageLogData.totalDamage : 0")
@@ -475,9 +439,9 @@
 (def element ADM_TextItem(_text:str, _width:number="'auto'", _textAlign:number = "left")
 	(scope
 		# Userprefs
-		(macro ADM_GET_USERPREF)
+		(macro TT_GET_USERPREF)
 
-		(macro ADM_GET_PREF_NUMBER _varName="'fontStylePrefIndex'" _pref="ADM_PREFS.FONT_STYLE_INDEX")
+		(macro TT_GET_PREF_NUMBER _varName="'fontStylePrefIndex'" _pref="ADM_PREFS.FONT_STYLE_INDEX")
 
 		# Names
 		(var fontStyleIndex:number = "fontStylePrefIndex < ADM_FONT_COLORS.length ? fontStylePrefIndex : 0")
