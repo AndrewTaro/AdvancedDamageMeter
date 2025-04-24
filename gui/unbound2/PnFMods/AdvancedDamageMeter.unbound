@@ -164,7 +164,7 @@
 		(macro STAGE_SIZE)
 		(var elementName:str = "ADM_ELEMENT_NAME + (_isIncomingDamage ? 'Incoming' : 'Outgoing')")
 		(var defaultPos:dict = "{positionX: 500, positionY: (_isIncomingDamage ? (stageHeight - 110) : (stageHeight - 220))}")
-		(macro DRAGGABLE_GET_DROP_POSITION _wndName="elementName" _defaults="defaultPos")
+		(macro DRAGGABLE_GET_DROP_POSITION _elementName="elementName" _defaultPosition="defaultPos")
 	)
 
 	(bind visible "isVisible")
@@ -184,11 +184,11 @@
 		(controller $Instance renderer='ModDraggableElement'
 			(bind enabled "!isPositionLocked")
 			(args
-				_wndName="elementName"
-				_defaults="defaultPos"
+				_elementName="elementName"
+				_defaultPosition="defaultPos"
 			)
 		)
-		#(element ModDraggableElement _wndName="elementName" _defaults="defaultPos")
+		#(element ModDraggableElement _elementName="elementName" _defaultPosition="defaultPos")
 
 		(block
 			(style
