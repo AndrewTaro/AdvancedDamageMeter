@@ -1,6 +1,3 @@
-(def constant TT_DAMAGEMETER_INSTALLED true) #for modconfig
-(def constant ADM_ELEMENT_NAME 'advancedDamageMeter') #for modconfig
-
 (def css $ADM_TextStyle()
 	(extends $TextDefaultNM)
 	(extends $FontEnableReadability)
@@ -18,6 +15,8 @@
 	)
 )
 
+# Still a live palette: dDamageMeter.fontStyleIndex stayed a 5-option dropdown ORDINAL in the schema,
+# so unlike DamageMonitor's font colour it did NOT collapse into a packed `color` setting.
 (def constant ADM_FONT_COLORS [
 	"FONT_CLASS_TO_COLOR['$FontColorDefault']",
 	"FONT_CLASS_TO_COLOR['$FontColorBuoyancy']",
@@ -25,6 +24,14 @@
 	"FONT_CLASS_TO_COLOR['$FontColorGreen']",
 	"FONT_CLASS_TO_COLOR['$FontColorOrange']",
 ])
+
+# Read by the header and by every ADM_TextItem; folded so a silently-wrong key has one place to live.
+# Fixed var names -- one use per scope.
+(def macro ADM_GET_FONT_COLOR ()
+	(macro TT_GET_PREF _varName="'__fontStylePref'" _key="'dDamageMeter.fontStyleIndex'")
+	(var __fontStyleIndex:number = "null != __fontStylePref && null != __fontStylePref.value ? __fontStylePref.value : 0")
+	(var fontColor:number = "ADM_FONT_COLORS[__fontStyleIndex < ADM_FONT_COLORS.length ? __fontStyleIndex : 0]")
+)
 
 (def constant ADM_SHIP_ICON_COLOR_PRESET [
 	#Use -(234-0x??)
@@ -125,22 +132,31 @@
 
 (def element ADM_DamageMeterItem(_isIncomingDamage:bool=true)
 	(scope
-		#Userprefs
-		(macro TT_GET_USERPREF)
+		# Incoming and outgoing are two independent subtrees of the schema, so the dotted key is a
+		# per-side PREFIX composed at each call site.  The position hangs off the same prefix as
+		# `<prefix>.position` -- a position key is never the prefix itself, or its opaque bucket map
+		# would share a node with the siblings and eat them.
+		(var sidePref:str = "_isIncomingDamage ? 'dDamageMeter.incoming' : 'dDamageMeter.outgoing'")
 
-		(var isVisiblePref:dict =  "_isIncomingDamage ? ADM_PREFS.INCOMING_DAMAGE_VISIBLE : ADM_PREFS.OUTGOING_DAMAGE_VISIBLE")
+		(macro TT_GET_PREF _varName="'scalePref'" _key="'dDamageMeter.scale'")
+		(var scale:number = "null != scalePref && null != scalePref.value ? scalePref.value : 1")
+		(macro TT_GET_PREF _varName="'rowCountsPref'" _key="'dDamageMeter.numRows'")
+		(var rowCounts:number = "null != rowCountsPref && null != rowCountsPref.value ? rowCountsPref.value : 3")
+		(macro TT_GET_PREF _varName="'rowGapPref'" _key="'dDamageMeter.rowHeight'")
+		(var rowGap:number = "null != rowGapPref && null != rowGapPref.value ? rowGapPref.value : 2")
+		(macro TT_GET_PREF _varName="'backgroundAlphaPref'" _key="'dDamageMeter.backgroundAlpha'")
+		(var backgroundAlpha:number = "null != backgroundAlphaPref && null != backgroundAlphaPref.value ? backgroundAlphaPref.value : 0.4")
 
-		(macro TT_GET_PREF_NUMBER _varName="'scale'" 				_pref="ADM_PREFS.SCALE")
-		(macro TT_GET_PREF_NUMBER _varName="'rowCounts'" 			_pref="ADM_PREFS.NUM_ROWS")
-		(macro TT_GET_PREF_NUMBER _varName="'rowGap'" 				_pref="ADM_PREFS.ROW_HEIGHT")
-		(macro TT_GET_PREF_NUMBER _varName="'fontStylePrefIndex'"	_pref="ADM_PREFS.FONT_STYLE_INDEX")
-		(macro TT_GET_PREF_NUMBER _varName="'backgroundAlpha'"		_pref="ADM_PREFS.BACKGROUND_ALPHA")
+		(macro TT_GET_PREF _varName="'visibleOnAltPref'" _key="'dDamageMeter.visibleOnAlt'")
+		(var isVisibleOnAlt:bool = "null != visibleOnAltPref && null != visibleOnAltPref.value ? visibleOnAltPref.value : false")
+		(macro TT_GET_PREF _varName="'backgroundOnAltPref'" _key="'dDamageMeter.backgroundVisibleOnAlt'")
+		(var isBackgroundVisibleOnAlt:bool = "null != backgroundOnAltPref && null != backgroundOnAltPref.value ? backgroundOnAltPref.value : false")
+		(macro TT_GET_PREF _varName="'reverseRowsPref'" _key="'dDamageMeter.reverseRows'")
+		(var isReversed:bool = "null != reverseRowsPref && null != reverseRowsPref.value ? reverseRowsPref.value : false")
+		(macro TT_GET_PREF _varName="'disableDragdropPref'" _key="'dDamageMeter.disableDragdrop'")
+		(var isPositionLocked:bool = "null != disableDragdropPref && null != disableDragdropPref.value ? disableDragdropPref.value : false")
 
-		(macro TT_GET_PREF_BOOL _varName="'isEnabled'" 			_pref="isVisiblePref")
-		(macro TT_GET_PREF_BOOL _varName="'isVisibleOnAlt'"		_pref="ADM_PREFS.VISIBLE_ON_ALT")
-		(macro TT_GET_PREF_BOOL _varName="'isBackgroundVisibleOnAlt'"	_pref="ADM_PREFS.BACKGROUND_VISIBLE_ON_ALT")
-		(macro TT_GET_PREF_BOOL _varName="'isReversed'" 			_pref="ADM_PREFS.REVERSE_ROWS")
-		(macro TT_GET_PREF_BOOL _varName="'isPositionLocked'"		_pref="ADM_PREFS.DISABLE_DRAGDROP")
+		(macro ADM_GET_FONT_COLOR)
 
 		# DamageLogEntity
 		(macro ADM_GET_DAMAGELOGS)
@@ -148,31 +164,54 @@
 		# Header Text
 		(var headerText:str = "_isIncomingDamage ? 'IDS_TAKEN_DAMAGE_HINT' : 'IDS_BATTLE_STATS_CAUSED_DAMAGE'")
 
-		# Visibility
+		# Visibility.  The per-side on/off bool became the shared 3-mode DISPLAY_MODE dropdown, so
+		# ADAPTIVE is a per-side "only on alt" on top of the still-global visibleOnAlt toggle; either
+		# one alone means alt-only.  A migrated bool lands as DISABLED/ENABLED, which reproduces the
+		# old behaviour exactly.
 		(var camera:gfx = "$datahub.getSingleComponent(CC.camera)")
 		(var altVision:bool = "camera.altVision" (event "camera.evAltVisionChanged"))
-		(var isVisible:bool = "isEnabled ? (isVisibleOnAlt ? altVision : true) : false")
+		(macro TT_GET_PREF _varName="'displayModePref'" _key="sidePref + '.displayMode'")
+		(var displayMode:number = "null != displayModePref && null != displayModePref.value ? displayModePref.value : TT_CONST.DISPLAY_MODE.ENABLED")
+		(var isAltOnly:bool = "displayMode == TT_CONST.DISPLAY_MODE.ADAPTIVE || isVisibleOnAlt")
+		(var isVisible:bool = "displayMode == TT_CONST.DISPLAY_MODE.DISABLED ? false : (isAltOnly ? altVision : true)")
 
 		# Background
 		(var isBackgroundVisible:bool = "isBackgroundVisibleOnAlt ? altVision : true")
 
-		# Font style
-		(var fontStyleIndex:number = "fontStylePrefIndex < ADM_FONT_COLORS.length ? fontStylePrefIndex : 0")
-		(var fontColor:number = "ADM_FONT_COLORS[fontStyleIndex]")
-
-		# Draggable
-		(macro STAGE_SIZE)
-		(var elementName:str = "ADM_ELEMENT_NAME + (_isIncomingDamage ? 'Incoming' : 'Outgoing')")
-		(var defaultPos:dict = "{positionX: 500, positionY: (_isIncomingDamage ? (stageHeight - 110) : (stageHeight - 220))}")
-		(macro DRAGGABLE_GET_DROP_POSITION _elementName="elementName" _defaultPosition="defaultPos")
+		# Python owns the position value, its resKey bucket AND the first-placement default
+		# (the schema's left/bottom anchor, which the pivot below matches), so there is no view-side
+		# default or stage math here.
+		(macro TT_DRAGGABLE_POSITION _fullKey="sidePref + '.position'")
 	)
 
 	(bind visible "isVisible")
 
 	(style
 		(position = "absolute")
-		(bind left "dragPosX")
-		(bind top "dragPosY")
+		(bind left "dragX")
+		(bind top "dragY")
+		# Bottom-left transform origin, matching the schema's left/bottom anchor -- Python places the
+		# origin and bakes no size, so a disagreeing pivot lands the panel a full height away.
+		# Observation: the legacy top-left defaults were stageHeight-110 / stageHeight-220 and the
+		# schema offsets are 10 / 120, i.e. exactly 100px lower in both cases -- one panel height.
+		# Consequence: the panel now grows UPWARD from a fixed bottom edge as rowCounts rises,
+		# where it used to grow downward from a fixed top edge.
+		(pivotY = 100%)
+	)
+
+	# Full-size transparent drag surface, coextensive with the positioned element (reportGeometry
+	# describes the block TT_DRAGGABLE sits in, so a smaller grab handle would relocate the panel).
+	# Declared BEFORE the content so the injected signifier stays behind it -- zindex does not cross a
+	# block boundary.  hitTest follows the lock: the macro gates the drag writes and the signifier,
+	# but only dropping hitTest here suppresses the drag-hint tooltip.
+	(block
+		(class $FullsizeAbsolute)
+		# hitTest is a STYLE property when BOUND -- directly under a (block ...) it throws at build time.
+		(style
+			(backgroundColor = 0x00FFFFFF)
+			(bind hitTest "!isPositionLocked")
+		)
+		(macro TT_DRAGGABLE _fullKey="sidePref + '.position'" _isDragEnabled="!isPositionLocked")
 	)
 
 	(block
@@ -180,15 +219,6 @@
 			(bind scaleX "scale")
 			(bind scaleY "scale")
 		)
-
-		(controller $Instance renderer='ModDraggableElement'
-			(bind enabled "!isPositionLocked")
-			(args
-				_elementName="elementName"
-				_defaultPosition="defaultPos"
-			)
-		)
-		#(element ModDraggableElement _elementName="elementName" _defaultPosition="defaultPos")
 
 		(block
 			(style
@@ -236,7 +266,7 @@
 	)
 
 	# Mod Config
-	(element TT_ConfigButtonElement _modIndex = "8"
+	(element TT_ConfigButtonElement _modSlug = "'damage-meter'"
 		(style
 			(left = -30px)
 		)
@@ -276,9 +306,8 @@
 
 (def element ADM_RowIndexItem(_index:number)
 	(scope
-		(macro TT_GET_USERPREF)
-
-		(macro TT_GET_PREF_BOOL 	_varName="'isRowIndexVisible'" 	_pref="ADM_PREFS.ROW_INDEX_VISIBLE")
+		(macro TT_GET_PREF _varName="'rowIndexPref'" _key="'dDamageMeter.rowIndexVisible'")
+		(var isRowIndexVisible:bool = "null != rowIndexPref && null != rowIndexPref.value ? rowIndexPref.value : true")
 
 		(var indexText:str = "'' + (_index + 1) + '.'")
 	)
@@ -297,12 +326,12 @@
 
 (def element ADM_PlayerNameAndTagItem(_damageLogData:dict)
 	(scope
-		# Userprefs
-		(macro TT_GET_USERPREF)
-
-		(macro TT_GET_PREF_BOOL 	_varName="'isClanTagVisible'" 		_pref="ADM_PREFS.CLAN_TAG_VISIBLE")
-		(macro TT_GET_PREF_BOOL 	_varName="'isPlayerNameVisible'" 	_pref="ADM_PREFS.PLAYER_NAME_VISIBLE")
-		(macro TT_GET_PREF_NUMBER 	_varName="'widthModifier'"			_pref="ADM_PREFS.PLAYER_INFO_WIDTH")
+		(macro TT_GET_PREF _varName="'clanTagPref'" _key="'dDamageMeter.clanTagVisible'")
+		(var isClanTagVisible:bool = "null != clanTagPref && null != clanTagPref.value ? clanTagPref.value : false")
+		(macro TT_GET_PREF _varName="'playerNamePref'" _key="'dDamageMeter.playerNameVisible'")
+		(var isPlayerNameVisible:bool = "null != playerNamePref && null != playerNamePref.value ? playerNamePref.value : true")
+		(macro TT_GET_PREF _varName="'widthPref'" _key="'dDamageMeter.playerInfoWidth'")
+		(var widthModifier:number = "null != widthPref && null != widthPref.value ? widthPref.value : 1")
 
 		# Names
 		(var playerName:str = "isPlayerNameVisible && _damageLogData ? _damageLogData.playerName : ''")
@@ -327,13 +356,14 @@
 
 (def element ADM_ShipInfoItem(_damageLogData:dict)
 	(scope
-		# Userprefs
-		(macro TT_GET_USERPREF)
-
-		(macro TT_GET_PREF_BOOL	_varName="'isShipNameVisible'" 	_pref="ADM_PREFS.SHIP_NAME_VISIBLE")
-		(macro TT_GET_PREF_BOOL 	_varName="'isShipTypeVisible'" 	_pref="ADM_PREFS.SHIP_TYPE_VISIBLE")
-		(macro TT_GET_PREF_NUMBER 	_varName="'widthModifier'"			_pref="ADM_PREFS.SHIP_NAME_WIDTH")
-		(macro TT_GET_PREF_NUMBER 	_varName="'shipTypeStylePrefIndex'"	_pref="ADM_PREFS.SHIP_TYPE_STYLE_INDEX")
+		(macro TT_GET_PREF _varName="'shipNamePref'" _key="'dDamageMeter.shipNameVisible'")
+		(var isShipNameVisible:bool = "null != shipNamePref && null != shipNamePref.value ? shipNamePref.value : true")
+		(macro TT_GET_PREF _varName="'shipTypePref'" _key="'dDamageMeter.shipTypeVisible'")
+		(var isShipTypeVisible:bool = "null != shipTypePref && null != shipTypePref.value ? shipTypePref.value : true")
+		(macro TT_GET_PREF _varName="'widthPref'" _key="'dDamageMeter.shipNameWidth'")
+		(var widthModifier:number = "null != widthPref && null != widthPref.value ? widthPref.value : 1")
+		(macro TT_GET_PREF _varName="'shipTypeStylePref'" _key="'dDamageMeter.shipTypeStyleIndex'")
+		(var shipTypeStylePrefIndex:number = "null != shipTypeStylePref && null != shipTypeStylePref.value ? shipTypeStylePref.value : 0")
 
 		# Names
 		(var shipName:str = "_damageLogData ? tr(_damageLogData.shipNameIDS) : ''")
@@ -384,10 +414,8 @@
 
 (def element ADM_DamageInfoItem(_damageLogData:dict, _isAnimated:bool=false)
 	(scope
-		# Userprefs
-		(macro TT_GET_USERPREF)
-
-		(macro TT_GET_PREF_BOOL _varName="'isLastDamageVisible'" 	_pref="ADM_PREFS.LAST_DAMAGE_VISIBLE")
+		(macro TT_GET_PREF _varName="'lastDamagePref'" _key="'dDamageMeter.lastDamageVisible'")
+		(var isLastDamageVisible:bool = "null != lastDamagePref && null != lastDamagePref.value ? lastDamagePref.value : true")
 
 		# Damages
 		(var totalDamage:number = "_damageLogData ? _damageLogData.totalDamage : 0")
@@ -438,14 +466,7 @@
 
 (def element ADM_TextItem(_text:str, _width:number="'auto'", _textAlign:number = "left")
 	(scope
-		# Userprefs
-		(macro TT_GET_USERPREF)
-
-		(macro TT_GET_PREF_NUMBER _varName="'fontStylePrefIndex'" _pref="ADM_PREFS.FONT_STYLE_INDEX")
-
-		# Names
-		(var fontStyleIndex:number = "fontStylePrefIndex < ADM_FONT_COLORS.length ? fontStylePrefIndex : 0")
-		(var fontColor:number = "ADM_FONT_COLORS[fontStyleIndex]")
+		(macro ADM_GET_FONT_COLOR)
 	)
 
 	(style

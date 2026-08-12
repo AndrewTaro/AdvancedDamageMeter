@@ -19,7 +19,6 @@ etc.
 
 # Requirements
 You must install the following for this mod to work:
-- [DraggableUnbound2](../../../DraggableUnbound2)
 - [TTaro Mod Config](../../../TTaroModConfig)
 
 # Install
