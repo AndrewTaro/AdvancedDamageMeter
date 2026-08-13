@@ -15,22 +15,13 @@
 	)
 )
 
-# Still a live palette: dDamageMeter.fontStyleIndex stayed a 5-option dropdown ORDINAL in the schema,
-# so unlike DamageMonitor's font colour it did NOT collapse into a packed `color` setting.
-(def constant ADM_FONT_COLORS [
-	"FONT_CLASS_TO_COLOR['$FontColorDefault']",
-	"FONT_CLASS_TO_COLOR['$FontColorBuoyancy']",
-	"FONT_CLASS_TO_COLOR['$FontColorGolden']",
-	"FONT_CLASS_TO_COLOR['$FontColorGreen']",
-	"FONT_CLASS_TO_COLOR['$FontColorOrange']",
-])
-
 # Read by the header and by every ADM_TextItem; folded so a silently-wrong key has one place to live.
-# Fixed var names -- one use per scope.
+# Fixed var names -- one use per scope.  `dDamageMeter.fontColor` is a packed `color` setting, so its
+# `value` binds straight through to the ARGB target; never recompute a packed colour in the view
+# (>= 2^31 overflows).  The 5-entry ADM_FONT_COLORS palette it used to index is dead, not renamed.
 (def macro ADM_GET_FONT_COLOR ()
-	(macro TT_GET_PREF _varName="'__fontStylePref'" _key="'dDamageMeter.fontStyleIndex'")
-	(var __fontStyleIndex:number = "null != __fontStylePref && null != __fontStylePref.value ? __fontStylePref.value : 0")
-	(var fontColor:number = "ADM_FONT_COLORS[__fontStyleIndex < ADM_FONT_COLORS.length ? __fontStyleIndex : 0]")
+	(macro TT_GET_PREF _varName="'__fontColorPref'" _key="'dDamageMeter.fontColor'")
+	(var fontColor:number = "null != __fontColorPref && null != __fontColorPref.value ? __fontColorPref.value : 0xFFEEEEEE")
 )
 
 (def constant ADM_SHIP_ICON_COLOR_PRESET [
