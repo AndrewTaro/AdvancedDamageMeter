@@ -181,13 +181,15 @@
 		(position = "absolute")
 		(bind left "dragX")
 		(bind top "dragY")
-		# Bottom-left transform origin, matching the schema's left/bottom anchor -- Python places the
-		# origin and bakes no size, so a disagreeing pivot lands the panel a full height away.
-		# Observation: the legacy top-left defaults were stageHeight-110 / stageHeight-220 and the
-		# schema offsets are 10 / 120, i.e. exactly 100px lower in both cases -- one panel height.
-		# Consequence: the panel now grows UPWARD from a fixed bottom edge as rowCounts rises,
-		# where it used to grow downward from a fixed top edge.
-		(pivotY = 100%)
+		# NO pivot -- top-left origin, as legacy.  A stored position is an ORIGIN, so a pivot change
+		# re-reads the folded legacy advancedDamageMeterIncoming/Outgoing_positionY as a bottom edge
+		# and moves every migrated panel up by its own height.
+		# The schema's left/bottom anchor still resolves correctly without a matching pivot: Python is
+		# size-aware and the pivot cancels (boxTop = P - f*size, via the reported poy).  The legacy
+		# top-left defaults were stageHeight-110 / stageHeight-220 against schema offsets 10 / 120 --
+		# exactly one panel height apart, which is that same size term.
+		# Consequence, and it matches legacy: the panel grows DOWNWARD from a fixed top as rowCounts
+		# rises, not upward from a fixed bottom.
 	)
 
 	# Full-size transparent drag surface, coextensive with the positioned element (reportGeometry
