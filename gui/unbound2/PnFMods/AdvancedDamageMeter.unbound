@@ -91,8 +91,6 @@
 	},
 ])
 
-(def constant ADM_PLAYER_INFO_WIDTH 120px)
-(def constant ADM_SHIP_NAME_WIDTH 90px)
 (def constant ADM_ROW_HEIGHT 15px)
 (def constant ADM_ROW_GAP 2px)
 
@@ -131,18 +129,16 @@
 
 		(macro TT_GET_PREF _varName="'scalePref'" _key="'dDamageMeter.scale'")
 		(var scale:number = "null != scalePref && null != scalePref.value ? scalePref.value : 1")
-		(macro TT_GET_PREF _varName="'rowCountsPref'" _key="'dDamageMeter.numRows'")
+		(macro TT_GET_PREF _varName="'rowCountsPref'" _key="'dDamageMeter.panel.rowCounts'")
 		(var rowCounts:number = "null != rowCountsPref && null != rowCountsPref.value ? rowCountsPref.value : 3")
-		(macro TT_GET_PREF _varName="'rowGapPref'" _key="'dDamageMeter.rowHeight'")
+		(macro TT_GET_PREF _varName="'rowGapPref'" _key="'dDamageMeter.panel.rowHeight'")
 		(var rowGap:number = "null != rowGapPref && null != rowGapPref.value ? rowGapPref.value : 2")
-		(macro TT_GET_PREF _varName="'backgroundAlphaPref'" _key="'dDamageMeter.backgroundAlpha'")
+		(macro TT_GET_PREF _varName="'backgroundAlphaPref'" _key="'dDamageMeter.background.alpha'")
 		(var backgroundAlpha:number = "null != backgroundAlphaPref && null != backgroundAlphaPref.value ? backgroundAlphaPref.value : 0.4")
 
-		(macro TT_GET_PREF _varName="'visibleOnAltPref'" _key="'dDamageMeter.visibleOnAlt'")
-		(var isVisibleOnAlt:bool = "null != visibleOnAltPref && null != visibleOnAltPref.value ? visibleOnAltPref.value : false")
-		(macro TT_GET_PREF _varName="'backgroundOnAltPref'" _key="'dDamageMeter.backgroundVisibleOnAlt'")
-		(var isBackgroundVisibleOnAlt:bool = "null != backgroundOnAltPref && null != backgroundOnAltPref.value ? backgroundOnAltPref.value : false")
-		(macro TT_GET_PREF _varName="'reverseRowsPref'" _key="'dDamageMeter.reverseRows'")
+		(macro TT_GET_PREF _varName="'backgroundDisplayModePref'" _key="'dDamageMeter.background.displayMode'")
+		(var backgroundDisplayMode:number = "null != backgroundDisplayModePref && null != backgroundDisplayModePref.value ? backgroundDisplayModePref.value : TT_CONST.DISPLAY_MODE.ENABLED")
+		(macro TT_GET_PREF _varName="'reverseRowsPref'" _key="'dDamageMeter.panel.reverseRows'")
 		(var isReversed:bool = "null != reverseRowsPref && null != reverseRowsPref.value ? reverseRowsPref.value : false")
 		(macro TT_GET_PREF _varName="'disableDragdropPref'" _key="'dDamageMeter.disableDragdrop'")
 		(var isPositionLocked:bool = "null != disableDragdropPref && null != disableDragdropPref.value ? disableDragdropPref.value : false")
@@ -155,19 +151,17 @@
 		# Header Text
 		(var headerText:str = "_isIncomingDamage ? 'IDS_TAKEN_DAMAGE_HINT' : 'IDS_BATTLE_STATS_CAUSED_DAMAGE'")
 
-		# Visibility.  The per-side on/off bool became the shared 3-mode DISPLAY_MODE dropdown, so
-		# ADAPTIVE is a per-side "only on alt" on top of the still-global visibleOnAlt toggle; either
-		# one alone means alt-only.  A migrated bool lands as DISABLED/ENABLED, which reproduces the
-		# old behaviour exactly.
+		# Visibility is this side's DISPLAY_MODE alone.  There is deliberately no meter-wide override on
+		# top: with one, "alt-only" became the OR of three settings and the config screen stopped
+		# explaining what you would actually see.
 		(var camera:gfx = "$datahub.getSingleComponent(CC.camera)")
 		(var altVision:bool = "camera.altVision" (event "camera.evAltVisionChanged"))
 		(macro TT_GET_PREF _varName="'displayModePref'" _key="sidePref + '.displayMode'")
 		(var displayMode:number = "null != displayModePref && null != displayModePref.value ? displayModePref.value : TT_CONST.DISPLAY_MODE.ENABLED")
-		(var isAltOnly:bool = "displayMode == TT_CONST.DISPLAY_MODE.ADAPTIVE || isVisibleOnAlt")
-		(var isVisible:bool = "displayMode == TT_CONST.DISPLAY_MODE.DISABLED ? false : (isAltOnly ? altVision : true)")
+		(var isVisible:bool = "displayMode == TT_CONST.DISPLAY_MODE.DISABLED ? false : (displayMode == TT_CONST.DISPLAY_MODE.ADAPTIVE ? altVision : true)")
 
 		# Background
-		(var isBackgroundVisible:bool = "isBackgroundVisibleOnAlt ? altVision : true")
+		(var isBackgroundVisible:bool = "backgroundDisplayMode == TT_CONST.DISPLAY_MODE.DISABLED ? false : (backgroundDisplayMode == TT_CONST.DISPLAY_MODE.ADAPTIVE ? altVision : true)")
 
 		# Python owns the position value, its resKey bucket AND the first-placement default
 		# (the schema's left/bottom anchor, which the pivot below matches), so there is no view-side
@@ -299,7 +293,7 @@
 
 (def element ADM_RowIndexItem(_index:number)
 	(scope
-		(macro TT_GET_PREF _varName="'rowIndexPref'" _key="'dDamageMeter.rowIndexVisible'")
+		(macro TT_GET_PREF _varName="'rowIndexPref'" _key="'dDamageMeter.panel.rowIndex'")
 		(var isRowIndexVisible:bool = "null != rowIndexPref && null != rowIndexPref.value ? rowIndexPref.value : true")
 
 		(var indexText:str = "'' + (_index + 1) + '.'")
@@ -319,12 +313,12 @@
 
 (def element ADM_PlayerNameAndTagItem(_damageLogData:dict)
 	(scope
-		(macro TT_GET_PREF _varName="'clanTagPref'" _key="'dDamageMeter.clanTagVisible'")
+		(macro TT_GET_PREF _varName="'clanTagPref'" _key="'dDamageMeter.playerInfo.clanName'")
 		(var isClanTagVisible:bool = "null != clanTagPref && null != clanTagPref.value ? clanTagPref.value : false")
-		(macro TT_GET_PREF _varName="'playerNamePref'" _key="'dDamageMeter.playerNameVisible'")
+		(macro TT_GET_PREF _varName="'playerNamePref'" _key="'dDamageMeter.playerInfo.playerName'")
 		(var isPlayerNameVisible:bool = "null != playerNamePref && null != playerNamePref.value ? playerNamePref.value : true")
-		(macro TT_GET_PREF _varName="'widthPref'" _key="'dDamageMeter.playerInfoWidth'")
-		(var widthModifier:number = "null != widthPref && null != widthPref.value ? widthPref.value : 1")
+		(macro TT_GET_PREF _varName="'widthPref'" _key="'dDamageMeter.playerInfo.width'")
+		(var nameWidth:number = "widthPref.value")
 
 		# Names
 		(var playerName:str = "isPlayerNameVisible && _damageLogData ? _damageLogData.playerName : ''")
@@ -333,8 +327,6 @@
 		(var clanTagWithBrackets:str = "isClanTagVisible && clanTag ? '[' + clanTag + ']' : ''")
 
 		(var nameWithTag:str = "clanTagWithBrackets + playerName")
-
-		(var nameWidth:number = "ADM_PLAYER_INFO_WIDTH * widthModifier")
 	)
 
 	(style
@@ -349,21 +341,18 @@
 
 (def element ADM_ShipInfoItem(_damageLogData:dict)
 	(scope
-		(macro TT_GET_PREF _varName="'shipNamePref'" _key="'dDamageMeter.shipNameVisible'")
+		(macro TT_GET_PREF _varName="'shipNamePref'" _key="'dDamageMeter.shipInfo.name'")
 		(var isShipNameVisible:bool = "null != shipNamePref && null != shipNamePref.value ? shipNamePref.value : true")
-		(macro TT_GET_PREF _varName="'shipTypePref'" _key="'dDamageMeter.shipTypeVisible'")
+		(macro TT_GET_PREF _varName="'shipTypePref'" _key="'dDamageMeter.shipInfo.icon'")
 		(var isShipTypeVisible:bool = "null != shipTypePref && null != shipTypePref.value ? shipTypePref.value : true")
-		(macro TT_GET_PREF _varName="'widthPref'" _key="'dDamageMeter.shipNameWidth'")
-		(var widthModifier:number = "null != widthPref && null != widthPref.value ? widthPref.value : 1")
-		(macro TT_GET_PREF _varName="'shipTypeStylePref'" _key="'dDamageMeter.shipTypeStyleIndex'")
+		(macro TT_GET_PREF _varName="'widthPref'" _key="'dDamageMeter.shipInfo.width'")
+		(var nameWidth:number = "widthPref.value")
+		(macro TT_GET_PREF _varName="'shipTypeStylePref'" _key="'dDamageMeter.shipInfo.color'")
 		(var shipTypeStylePrefIndex:number = "null != shipTypeStylePref && null != shipTypeStylePref.value ? shipTypeStylePref.value : 0")
 
 		# Names
 		(var shipName:str = "_damageLogData ? tr(_damageLogData.shipNameIDS) : ''")
 		(var shipType:str = "_damageLogData ? _damageLogData.subtype : ''")
-
-		# Width
-		(var nameWidth:number = "ADM_SHIP_NAME_WIDTH * widthModifier")
 
 		# Color
 		(var shipTypeStyleIndex:number = "shipTypeStylePrefIndex < ADM_SHIP_ICON_COLOR_PRESET.length ? shipTypeStylePrefIndex : 0")
@@ -407,7 +396,7 @@
 
 (def element ADM_DamageInfoItem(_damageLogData:dict, _isAnimated:bool=false)
 	(scope
-		(macro TT_GET_PREF _varName="'lastDamagePref'" _key="'dDamageMeter.lastDamageVisible'")
+		(macro TT_GET_PREF _varName="'lastDamagePref'" _key="'dDamageMeter.panel.lastDamage'")
 		(var isLastDamageVisible:bool = "null != lastDamagePref && null != lastDamagePref.value ? lastDamagePref.value : true")
 
 		# Damages
