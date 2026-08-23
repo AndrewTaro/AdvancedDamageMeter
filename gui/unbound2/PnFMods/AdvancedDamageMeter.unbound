@@ -20,7 +20,7 @@
 # `value` binds straight through to the ARGB target; never recompute a packed colour in the view
 # (>= 2^31 overflows).  The 5-entry ADM_FONT_COLORS palette it used to index is dead, not renamed.
 (def macro ADM_GET_FONT_COLOR ()
-	(macro TT_GET_PREF _varName="'__fontColorPref'" _key="'dDamageMeter.fontColor'")
+	(macro TT_GET_PREF _varName="'__fontColorPref'" _key="'dDamageMeter.font.color'")
 	(var fontColor:number = "null != __fontColorPref && null != __fontColorPref.value ? __fontColorPref.value : 0xFFEEEEEE")
 )
 
@@ -129,7 +129,7 @@
 
 		(macro TT_GET_PREF _varName="'scalePref'" _key="'dDamageMeter.scale'")
 		(var scale:number = "null != scalePref && null != scalePref.value ? scalePref.value : 1")
-		(macro TT_GET_PREF _varName="'rowCountsPref'" _key="'dDamageMeter.panel.rowCounts'")
+		(macro TT_GET_PREF _varName="'rowCountsPref'" _key="'dDamageMeter.panel.rowCount'")
 		(var rowCounts:number = "null != rowCountsPref && null != rowCountsPref.value ? rowCountsPref.value : 3")
 		(macro TT_GET_PREF _varName="'rowGapPref'" _key="'dDamageMeter.panel.rowHeight'")
 		(var rowGap:number = "null != rowGapPref && null != rowGapPref.value ? rowGapPref.value : 2")
@@ -140,7 +140,7 @@
 		(var backgroundDisplayMode:number = "null != backgroundDisplayModePref && null != backgroundDisplayModePref.value ? backgroundDisplayModePref.value : TT_CONST.DISPLAY_MODE.ENABLED")
 		(macro TT_GET_PREF _varName="'reverseRowsPref'" _key="'dDamageMeter.panel.reverseRows'")
 		(var isReversed:bool = "null != reverseRowsPref && null != reverseRowsPref.value ? reverseRowsPref.value : false")
-		(macro TT_GET_PREF _varName="'disableDragdropPref'" _key="'dDamageMeter.disableDragdrop'")
+		(macro TT_GET_PREF _varName="'disableDragdropPref'" _key="'dDamageMeter.disableDragDrop'")
 		(var isPositionLocked:bool = "null != disableDragdropPref && null != disableDragdropPref.value ? disableDragdropPref.value : false")
 
 		(macro ADM_GET_FONT_COLOR)
@@ -293,7 +293,7 @@
 
 (def element ADM_RowIndexItem(_index:number)
 	(scope
-		(macro TT_GET_PREF _varName="'rowIndexPref'" _key="'dDamageMeter.panel.rowIndex'")
+		(macro TT_GET_PREF _varName="'rowIndexPref'" _key="'dDamageMeter.panel.showIndex'")
 		(var isRowIndexVisible:bool = "null != rowIndexPref && null != rowIndexPref.value ? rowIndexPref.value : true")
 
 		(var indexText:str = "'' + (_index + 1) + '.'")
@@ -313,9 +313,9 @@
 
 (def element ADM_PlayerNameAndTagItem(_damageLogData:dict)
 	(scope
-		(macro TT_GET_PREF _varName="'clanTagPref'" _key="'dDamageMeter.playerInfo.clanName'")
+		(macro TT_GET_PREF _varName="'clanTagPref'" _key="'dDamageMeter.playerInfo.clan'")
 		(var isClanTagVisible:bool = "null != clanTagPref && null != clanTagPref.value ? clanTagPref.value : false")
-		(macro TT_GET_PREF _varName="'playerNamePref'" _key="'dDamageMeter.playerInfo.playerName'")
+		(macro TT_GET_PREF _varName="'playerNamePref'" _key="'dDamageMeter.playerInfo.name'")
 		(var isPlayerNameVisible:bool = "null != playerNamePref && null != playerNamePref.value ? playerNamePref.value : true")
 		(macro TT_GET_PREF _varName="'widthPref'" _key="'dDamageMeter.playerInfo.width'")
 		(var nameWidth:number = "widthPref.value")
