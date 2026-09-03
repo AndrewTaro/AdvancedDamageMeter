@@ -16,11 +16,11 @@
 )
 
 # Read by the header and by every ADM_TextItem; folded so a silently-wrong key has one place to live.
-# Fixed var names -- one use per scope.  `dDamageMeter.fontColor` is a packed `color` setting, so its
+# Fixed var names -- one use per scope.  `ttaro.dDamageMeter.fontColor` is a packed `color` setting, so its
 # `value` binds straight through to the ARGB target; never recompute a packed colour in the view
 # (>= 2^31 overflows).  The 5-entry ADM_FONT_COLORS palette it used to index is dead, not renamed.
 (def macro ADM_GET_FONT_COLOR ()
-	(macro TT_GET_PREF _varName="'__fontColorPref'" _key="'dDamageMeter.font.color'")
+	(macro TT_GET_PREF _varName="'__fontColorPref'" _key="'ttaro.dDamageMeter.font.color'")
 	(var fontColor:number = "null != __fontColorPref && null != __fontColorPref.value ? __fontColorPref.value : 0xFFEEEEEE")
 )
 
@@ -125,22 +125,22 @@
 		# per-side PREFIX composed at each call site.  The position hangs off the same prefix as
 		# `<prefix>.position` -- a position key is never the prefix itself, or its opaque bucket map
 		# would share a node with the siblings and eat them.
-		(var sidePref:str = "_isIncomingDamage ? 'dDamageMeter.incoming' : 'dDamageMeter.outgoing'")
+		(var sidePref:str = "_isIncomingDamage ? 'ttaro.dDamageMeter.incoming' : 'ttaro.dDamageMeter.outgoing'")
 
-		(macro TT_GET_PREF _varName="'scalePref'" _key="'dDamageMeter.scale'")
+		(macro TT_GET_PREF _varName="'scalePref'" _key="'ttaro.dDamageMeter.scale'")
 		(var scale:number = "null != scalePref && null != scalePref.value ? scalePref.value : 1")
-		(macro TT_GET_PREF _varName="'rowCountsPref'" _key="'dDamageMeter.panel.rowCount'")
+		(macro TT_GET_PREF _varName="'rowCountsPref'" _key="'ttaro.dDamageMeter.panel.rowCount'")
 		(var rowCounts:number = "null != rowCountsPref && null != rowCountsPref.value ? rowCountsPref.value : 3")
-		(macro TT_GET_PREF _varName="'rowGapPref'" _key="'dDamageMeter.panel.rowHeight'")
+		(macro TT_GET_PREF _varName="'rowGapPref'" _key="'ttaro.dDamageMeter.panel.rowHeight'")
 		(var rowGap:number = "null != rowGapPref && null != rowGapPref.value ? rowGapPref.value : 2")
-		(macro TT_GET_PREF _varName="'backgroundAlphaPref'" _key="'dDamageMeter.background.alpha'")
+		(macro TT_GET_PREF _varName="'backgroundAlphaPref'" _key="'ttaro.dDamageMeter.background.alpha'")
 		(var backgroundAlpha:number = "null != backgroundAlphaPref && null != backgroundAlphaPref.value ? backgroundAlphaPref.value : 0.4")
 
-		(macro TT_GET_PREF _varName="'backgroundDisplayModePref'" _key="'dDamageMeter.background.displayMode'")
+		(macro TT_GET_PREF _varName="'backgroundDisplayModePref'" _key="'ttaro.dDamageMeter.background.displayMode'")
 		(var backgroundDisplayMode:number = "null != backgroundDisplayModePref && null != backgroundDisplayModePref.value ? backgroundDisplayModePref.value : TT_CONST.DISPLAY_MODE.ENABLED")
-		(macro TT_GET_PREF _varName="'reverseRowsPref'" _key="'dDamageMeter.panel.reverseRows'")
+		(macro TT_GET_PREF _varName="'reverseRowsPref'" _key="'ttaro.dDamageMeter.panel.reverseRows'")
 		(var isReversed:bool = "null != reverseRowsPref && null != reverseRowsPref.value ? reverseRowsPref.value : false")
-		(macro TT_GET_PREF _varName="'disableDragdropPref'" _key="'dDamageMeter.disableDragDrop'")
+		(macro TT_GET_PREF _varName="'disableDragdropPref'" _key="'ttaro.dDamageMeter.disableDragDrop'")
 		(var isPositionLocked:bool = "null != disableDragdropPref && null != disableDragdropPref.value ? disableDragdropPref.value : false")
 
 		(macro ADM_GET_FONT_COLOR)
@@ -253,7 +253,7 @@
 	)
 
 	# Mod Config
-	(element TT_ConfigButtonElement _modSlug = "'damage-meter'"
+	(element TT_ConfigButtonElement _modSlug = "'ttaro.damage-meter'"
 		(style
 			(left = -30px)
 		)
@@ -293,7 +293,7 @@
 
 (def element ADM_RowIndexItem(_index:number)
 	(scope
-		(macro TT_GET_PREF _varName="'rowIndexPref'" _key="'dDamageMeter.panel.showIndex'")
+		(macro TT_GET_PREF _varName="'rowIndexPref'" _key="'ttaro.dDamageMeter.panel.showIndex'")
 		(var isRowIndexVisible:bool = "null != rowIndexPref && null != rowIndexPref.value ? rowIndexPref.value : true")
 
 		(var indexText:str = "'' + (_index + 1) + '.'")
@@ -313,11 +313,11 @@
 
 (def element ADM_PlayerNameAndTagItem(_damageLogData:dict)
 	(scope
-		(macro TT_GET_PREF _varName="'clanTagPref'" _key="'dDamageMeter.playerInfo.clan'")
+		(macro TT_GET_PREF _varName="'clanTagPref'" _key="'ttaro.dDamageMeter.playerInfo.clan'")
 		(var isClanTagVisible:bool = "null != clanTagPref && null != clanTagPref.value ? clanTagPref.value : false")
-		(macro TT_GET_PREF _varName="'playerNamePref'" _key="'dDamageMeter.playerInfo.name'")
+		(macro TT_GET_PREF _varName="'playerNamePref'" _key="'ttaro.dDamageMeter.playerInfo.name'")
 		(var isPlayerNameVisible:bool = "null != playerNamePref && null != playerNamePref.value ? playerNamePref.value : true")
-		(macro TT_GET_PREF _varName="'widthPref'" _key="'dDamageMeter.playerInfo.width'")
+		(macro TT_GET_PREF _varName="'widthPref'" _key="'ttaro.dDamageMeter.playerInfo.width'")
 		(var nameWidth:number = "widthPref.value")
 
 		# Names
@@ -341,13 +341,13 @@
 
 (def element ADM_ShipInfoItem(_damageLogData:dict)
 	(scope
-		(macro TT_GET_PREF _varName="'shipNamePref'" _key="'dDamageMeter.shipInfo.name'")
+		(macro TT_GET_PREF _varName="'shipNamePref'" _key="'ttaro.dDamageMeter.shipInfo.name'")
 		(var isShipNameVisible:bool = "null != shipNamePref && null != shipNamePref.value ? shipNamePref.value : true")
-		(macro TT_GET_PREF _varName="'shipTypePref'" _key="'dDamageMeter.shipInfo.icon'")
+		(macro TT_GET_PREF _varName="'shipTypePref'" _key="'ttaro.dDamageMeter.shipInfo.icon'")
 		(var isShipTypeVisible:bool = "null != shipTypePref && null != shipTypePref.value ? shipTypePref.value : true")
-		(macro TT_GET_PREF _varName="'widthPref'" _key="'dDamageMeter.shipInfo.width'")
+		(macro TT_GET_PREF _varName="'widthPref'" _key="'ttaro.dDamageMeter.shipInfo.width'")
 		(var nameWidth:number = "widthPref.value")
-		(macro TT_GET_PREF _varName="'shipTypeStylePref'" _key="'dDamageMeter.shipInfo.color'")
+		(macro TT_GET_PREF _varName="'shipTypeStylePref'" _key="'ttaro.dDamageMeter.shipInfo.color'")
 		(var shipTypeStylePrefIndex:number = "null != shipTypeStylePref && null != shipTypeStylePref.value ? shipTypeStylePref.value : 0")
 
 		# Names
@@ -396,7 +396,7 @@
 
 (def element ADM_DamageInfoItem(_damageLogData:dict, _isAnimated:bool=false)
 	(scope
-		(macro TT_GET_PREF _varName="'lastDamagePref'" _key="'dDamageMeter.panel.lastDamage'")
+		(macro TT_GET_PREF _varName="'lastDamagePref'" _key="'ttaro.dDamageMeter.panel.lastDamage'")
 		(var isLastDamageVisible:bool = "null != lastDamagePref && null != lastDamagePref.value ? lastDamagePref.value : true")
 
 		# Damages
