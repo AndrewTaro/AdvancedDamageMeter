@@ -2,7 +2,7 @@
 This modification records the history of received and caused damage.  
 This is a reworked version of the Damage Meter by [Monstrofil](https://github.com/Monstrofil), with the original author's permission.
 
-Various elements can be customized via [TTaro Mod Config](../../../TTaroModConfig). For example:
+Various elements can be customized via [TTaro Mod Config](../../../TTaroModUtils). For example:
 - Font Color
 - Display the mod only when Alt-key is pressed
 - Show/hide Player's Name
@@ -19,7 +19,7 @@ etc.
 
 # Requirements
 You must install the following for this mod to work:
-- [TTaro Mod Config](../../../TTaroModConfig)
+- [TTaro Mod Config](../../../TTaroModUtils)
 
 # Install
 1. Download a zip.
