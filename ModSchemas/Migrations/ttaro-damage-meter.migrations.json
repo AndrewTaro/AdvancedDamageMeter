@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 4,
+  "opVocabularyVersion": 1,
+  "slug": "damage-meter",
+  "migrations": [
+    {
+      "version": 1,
+      "description": "flat keys → dotted ancestry keys; slider step index → value; palette index → packed ARGB",
+      "ops": [
+        {
+          "op": "rename",
+          "from": "dDamageMeterBackgroundOpacity",
+          "to": "dDamageMeter.background.alpha"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterBackgroundVisibleOnAlt",
+          "to": "dDamageMeter.background.displayMode"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterClanTagVisible",
+          "to": "dDamageMeter.playerInfo.clan"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterDisableDragDrop",
+          "to": "dDamageMeter.disableDragDrop"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterFontStyleIndex",
+          "to": "dDamageMeter.font.color"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterIncomingDamageVisible",
+          "to": "dDamageMeter.incoming.displayMode"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterLastDamageVisible",
+          "to": "dDamageMeter.panel.lastDamage"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterNumRows",
+          "to": "dDamageMeter.panel.rowCount"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterOutgoingDamageVisible",
+          "to": "dDamageMeter.outgoing.displayMode"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterPlayerInfoWidth",
+          "to": "dDamageMeter.playerInfo.width"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterPlayerNameVisible",
+          "to": "dDamageMeter.playerInfo.name"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterReverseRows",
+          "to": "dDamageMeter.panel.reverseRows"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterRowHeight",
+          "to": "dDamageMeter.panel.rowHeight"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterRowIndexVisible",
+          "to": "dDamageMeter.panel.showIndex"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterScale",
+          "to": "dDamageMeter.scale"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterShipInfoWidth",
+          "to": "dDamageMeter.shipInfo.width"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterShipNameVisible",
+          "to": "dDamageMeter.shipInfo.name"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterShipTypeStyleIndex",
+          "to": "dDamageMeter.shipInfo.color"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeterShipTypeVisible",
+          "to": "dDamageMeter.shipInfo.icon"
+        },
+        {
+          "op": "transform",
+          "from": "dDamageMeter.background.alpha",
+          "to": "dDamageMeter.background.alpha",
+          "transform": "stepIndex",
+          "args": {
+            "min": 0,
+            "step": 0.1
+          }
+        },
+        {
+          "op": "transform",
+          "from": "dDamageMeter.background.displayMode",
+          "to": "dDamageMeter.background.displayMode",
+          "transform": "stepIndex",
+          "args": {
+            "min": 1,
+            "step": 1
+          }
+        },
+        {
+          "op": "transform",
+          "from": "dDamageMeter.panel.rowCount",
+          "to": "dDamageMeter.panel.rowCount",
+          "transform": "stepIndex",
+          "args": {
+            "min": 1,
+            "step": 1
+          }
+        },
+        {
+          "op": "transform",
+          "from": "dDamageMeter.panel.rowHeight",
+          "to": "dDamageMeter.panel.rowHeight",
+          "transform": "stepIndex",
+          "args": {
+            "min": 1,
+            "step": 1
+          }
+        },
+        {
+          "op": "transform",
+          "from": "dDamageMeter.playerInfo.width",
+          "to": "dDamageMeter.playerInfo.width",
+          "transform": "stepIndex",
+          "args": {
+            "min": 60,
+            "step": 12
+          }
+        },
+        {
+          "op": "transform",
+          "from": "dDamageMeter.scale",
+          "to": "dDamageMeter.scale",
+          "transform": "stepIndex",
+          "args": {
+            "min": 0.5,
+            "step": 0.1
+          }
+        },
+        {
+          "op": "transform",
+          "from": "dDamageMeter.shipInfo.width",
+          "to": "dDamageMeter.shipInfo.width",
+          "transform": "stepIndex",
+          "args": {
+            "min": 45,
+            "step": 9
+          }
+        },
+        {
+          "op": "transform",
+          "from": "dDamageMeter.font.color",
+          "to": "dDamageMeter.font.color",
+          "transform": "paletteIndex",
+          "args": {
+            "palette": [
+              15658734,
+              1296887,
+              16764006,
+              5040298,
+              16750899
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "legacyPositions": [
+    {
+      "key": "dDamageMeter.incoming.position",
+      "element": "advancedDamageMeterIncoming"
+    },
+    {
+      "key": "dDamageMeter.outgoing.position",
+      "element": "advancedDamageMeterOutgoing"
+    }
+  ]
+}

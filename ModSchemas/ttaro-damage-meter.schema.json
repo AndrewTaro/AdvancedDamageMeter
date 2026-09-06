@@ -1,0 +1,364 @@
+{
+  "schemaVersion": 4,
+  "id": "cmtkswuwp0008v014j87jx6d7",
+  "author": "ttaro",
+  "modName": "Damage Meter",
+  "slug": "damage-meter",
+  "order": 8,
+  "tree": [
+    {
+      "kind": "group",
+      "key": "cmsxh2pnt0002v0m04h6klgb6",
+      "label": "IDS_TT_TITLE_PLAYER_INFO",
+      "collapse": "expanded",
+      "children": [
+        {
+          "kind": "setting",
+          "control": "toggle",
+          "key": "dDamageMeter.playerInfo.clan",
+          "label": "IDS_TT_CLAN_NAME",
+          "default": true,
+          "enabledWhen": {
+            "kind": "group",
+            "join": "all",
+            "conditions": [
+              {
+                "kind": "compare",
+                "key": "dDamageMeter.playerInfo.name",
+                "op": "in",
+                "values": [
+                  1
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "kind": "setting",
+          "control": "toggle",
+          "key": "dDamageMeter.playerInfo.name",
+          "label": "IDS_TT_PLAYER_NAME",
+          "default": true
+        },
+        {
+          "kind": "setting",
+          "control": "slider",
+          "key": "dDamageMeter.playerInfo.width",
+          "label": "IDS_TT_COLUMN_WIDTH",
+          "default": 120,
+          "min": 60,
+          "max": 180,
+          "step": 12,
+          "decimals": 0
+        }
+      ]
+    },
+    {
+      "kind": "group",
+      "key": "cmsxh2pnv0004v0m03y7kvbco",
+      "label": "IDS_TT_TITLE_SHIP_INFO",
+      "collapse": "expanded",
+      "children": [
+        {
+          "kind": "setting",
+          "control": "toggle",
+          "key": "dDamageMeter.shipInfo.name",
+          "label": "IDS_TT_SHIP_NAME",
+          "default": true
+        },
+        {
+          "kind": "setting",
+          "control": "toggle",
+          "key": "dDamageMeter.shipInfo.icon",
+          "label": "IDS_TT_CLASS_ICON",
+          "default": true
+        },
+        {
+          "kind": "setting",
+          "control": "dropdown",
+          "key": "dDamageMeter.shipInfo.color",
+          "label": "IDS_TT_CLASS_ICON_COLOR",
+          "default": 0,
+          "options": [
+            {
+              "value": 0,
+              "phrase": "None"
+            },
+            {
+              "value": 1,
+              "phrase": "Aslain v1"
+            },
+            {
+              "value": 2,
+              "phrase": "Aslain v2"
+            },
+            {
+              "value": 3,
+              "phrase": "AutoSpy"
+            },
+            {
+              "value": 4,
+              "phrase": "Roslich"
+            },
+            {
+              "value": 5,
+              "phrase": "DeCease"
+            },
+            {
+              "value": 6,
+              "phrase": "Hakabase"
+            }
+          ]
+        },
+        {
+          "kind": "setting",
+          "control": "slider",
+          "key": "dDamageMeter.shipInfo.width",
+          "label": "IDS_TT_COLUMN_WIDTH",
+          "default": 90,
+          "min": 45,
+          "max": 135,
+          "step": 9,
+          "decimals": 0
+        }
+      ]
+    },
+    {
+      "kind": "group",
+      "key": "cmtktam1d003iv0d4sb9hggdw",
+      "label": "IDS_TT_TITLE_GENERAL",
+      "collapse": "expanded",
+      "children": [
+        {
+          "kind": "group",
+          "key": "cmt4us0gy0016v0rw6yyugago",
+          "aggregate": "inline",
+          "children": [
+            {
+              "kind": "setting",
+              "control": "color",
+              "key": "dDamageMeter.font.color",
+              "label": "IDS_TT_COLOR",
+              "default": 4293848814,
+              "min": 0,
+              "max": 4294967295
+            }
+          ]
+        },
+        {
+          "kind": "setting",
+          "control": "slider",
+          "key": "dDamageMeter.scale",
+          "label": "IDS_TT_UI_SCALE",
+          "default": 1,
+          "min": 0.5,
+          "max": 1.5,
+          "step": 0.1
+        },
+        {
+          "kind": "setting",
+          "control": "toggle",
+          "key": "dDamageMeter.disableDragDrop",
+          "label": "IDS_TT_DISABLE_DRAG_DROP",
+          "hint": {
+            "text": "IDS_TT_HINT_DISABLE_DRAG_DROP"
+          },
+          "default": false
+        },
+        {
+          "kind": "group",
+          "key": "cmtktam3z005jv0d4g7t7k876",
+          "label": "IDS_TT_OUTGOING_DAMAGE",
+          "children": [
+            {
+              "kind": "setting",
+              "control": "dropdown",
+              "key": "dDamageMeter.outgoing.displayMode",
+              "label": "IDS_TT_DISPLAY_MODE",
+              "default": 1,
+              "options": [
+                {
+                  "value": 0,
+                  "phrase": "IDS_TURN_OFF"
+                },
+                {
+                  "value": 1,
+                  "phrase": "IDS_TURN_ON"
+                },
+                {
+                  "value": 2,
+                  "phrase": "IDS_ALT_VISION_MODE_1",
+                  "icon": "CMD_ICONS"
+                }
+              ],
+              "optionStyle": "KEY"
+            },
+            {
+              "kind": "setting",
+              "control": "position",
+              "key": "dDamageMeter.outgoing.position",
+              "label": "IDS_TT_DRAGDROP_RESET",
+              "hint": {
+                "text": "IDS_TT_HINT_DRAGDROP_RESET"
+              },
+              "defaultPosition": {
+                "x": {
+                  "anchor": "left",
+                  "offset": 500
+                },
+                "y": {
+                  "anchor": "bottom",
+                  "offset": 120
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "group",
+          "key": "cmtktamc100c4v0d4dfs9whrp",
+          "label": "IDS_TT_INCOMING_DAMAGE",
+          "children": [
+            {
+              "kind": "setting",
+              "control": "dropdown",
+              "key": "dDamageMeter.incoming.displayMode",
+              "label": "IDS_TT_DISPLAY_MODE",
+              "default": 1,
+              "options": [
+                {
+                  "value": 0,
+                  "phrase": "IDS_TURN_OFF"
+                },
+                {
+                  "value": 1,
+                  "phrase": "IDS_TURN_ON"
+                },
+                {
+                  "value": 2,
+                  "phrase": "IDS_ALT_VISION_MODE_1",
+                  "icon": "CMD_ICONS"
+                }
+              ],
+              "optionStyle": "KEY"
+            },
+            {
+              "kind": "setting",
+              "control": "position",
+              "key": "dDamageMeter.incoming.position",
+              "label": "IDS_TT_DRAGDROP_RESET",
+              "hint": {
+                "text": "IDS_TT_HINT_DRAGDROP_RESET"
+              },
+              "defaultPosition": {
+                "x": {
+                  "anchor": "left",
+                  "offset": 500
+                },
+                "y": {
+                  "anchor": "bottom",
+                  "offset": 10
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "group",
+      "key": "cmtktamgv00g6v0d4tgrghr7v",
+      "label": "IDS_TT_ADVANCED_SETTINGS",
+      "collapse": "expanded",
+      "children": [
+        {
+          "kind": "setting",
+          "control": "toggle",
+          "key": "dDamageMeter.panel.lastDamage",
+          "label": "IDS_TT_LAST_DAMAGE",
+          "default": true
+        },
+        {
+          "kind": "setting",
+          "control": "toggle",
+          "key": "dDamageMeter.panel.reverseRows",
+          "label": "IDS_TT_REVERSE_ROWS",
+          "default": false
+        },
+        {
+          "kind": "setting",
+          "control": "toggle",
+          "key": "dDamageMeter.panel.showIndex",
+          "label": "IDS_TT_ROW_INDEX",
+          "default": true
+        },
+        {
+          "kind": "setting",
+          "control": "slider",
+          "key": "dDamageMeter.panel.rowCount",
+          "label": "IDS_TT_ROW_COUNTS",
+          "default": 3,
+          "min": 1,
+          "max": 10,
+          "step": 1,
+          "decimals": 0
+        },
+        {
+          "kind": "setting",
+          "control": "slider",
+          "key": "dDamageMeter.panel.rowHeight",
+          "label": "IDS_TT_ROW_HEIGHT",
+          "default": 2,
+          "min": 1,
+          "max": 10,
+          "step": 1,
+          "decimals": 0
+        }
+      ]
+    },
+    {
+      "kind": "group",
+      "key": "cmtktam63007dv0d4r2tk6t3w",
+      "label": "IDS_TT_TITLE_BACKGROUND",
+      "collapse": "expanded",
+      "children": [
+        {
+          "kind": "setting",
+          "control": "dropdown",
+          "key": "dDamageMeter.background.displayMode",
+          "label": "IDS_TT_DISPLAY_MODE",
+          "hint": {
+            "text": "IDS_TT_HINT_DISPLAY_MODE"
+          },
+          "default": 1,
+          "options": [
+            {
+              "value": 0,
+              "phrase": "IDS_TURN_OFF"
+            },
+            {
+              "value": 1,
+              "phrase": "IDS_TURN_ON"
+            },
+            {
+              "value": 2,
+              "phrase": "IDS_ALT_VISION_MODE_1",
+              "icon": "CMD_ICONS"
+            }
+          ],
+          "optionStyle": "KEY"
+        },
+        {
+          "kind": "setting",
+          "control": "slider",
+          "key": "dDamageMeter.background.alpha",
+          "label": "IDS_TT_OPACITY",
+          "default": 0.4,
+          "min": 0,
+          "max": 1,
+          "step": 0.1
+        }
+      ]
+    }
+  ]
+}
