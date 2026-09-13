@@ -358,7 +358,9 @@
 		(var shipTypeStyleIndex:number = "shipTypeStylePrefIndex < ADM_SHIP_ICON_COLOR_PRESET.length ? shipTypeStylePrefIndex : 0")
 		(var shipTypeStyle:dict = "ADM_SHIP_ICON_COLOR_PRESET[shipTypeStyleIndex]")
 		(var shipTypeColorTransform:dict = "shipTypeStyle[shipType]")
-		(var shipIcon:str = "'url:../battle_hud/markers/ship/icon_white_' + toLower(shipType) + '.png'")
+		# '' while shipType is empty (the placeholder row): a path with a hole in it is still
+		# requested -- hiding the block does not stop the load.
+		(var shipIcon:str = "shipType ? 'url:../battle_hud/markers/ship/icon_white_' + toLower(shipType) + '.png' : ''")
 	)
 
 	(style
@@ -470,7 +472,7 @@
 (def element ADM_AmmoIconItem(_damageLogData:dict)
 	(scope
 		(var ammoType:str = "_damageLogData && _damageLogData.ammoType ? _damageLogData.ammoType : ''")
-		(var weaponIconPath:str = "'url:../battle_hud/icon_frag/icon_frag_' + ammoType + '.png'")
+		(var weaponIconPath:str = "ammoType ? 'url:../battle_hud/icon_frag/icon_frag_' + ammoType + '.png' : ''")
 	)
 
 	(style
