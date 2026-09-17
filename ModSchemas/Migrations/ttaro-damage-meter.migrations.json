@@ -1,22 +1,12 @@
 {
   "schemaVersion": 4,
-  "opVocabularyVersion": 1,
+  "opVocabularyVersion": 3,
   "slug": "damage-meter",
   "migrations": [
     {
       "version": 1,
-      "description": "flat keys → dotted ancestry keys; slider step index → value; palette index → packed ARGB",
+      "description": "flat keys → dotted ancestry keys; legacy values decoded and folded onto the derived keys",
       "ops": [
-        {
-          "op": "rename",
-          "from": "dDamageMeterBackgroundOpacity",
-          "to": "dDamageMeter.background.alpha"
-        },
-        {
-          "op": "rename",
-          "from": "dDamageMeterBackgroundVisibleOnAlt",
-          "to": "dDamageMeter.background.displayMode"
-        },
         {
           "op": "rename",
           "from": "dDamageMeterClanTagVisible",
@@ -26,11 +16,6 @@
           "op": "rename",
           "from": "dDamageMeterDisableDragDrop",
           "to": "dDamageMeter.disableDragDrop"
-        },
-        {
-          "op": "rename",
-          "from": "dDamageMeterFontStyleIndex",
-          "to": "dDamageMeter.font.color"
         },
         {
           "op": "rename",
@@ -44,18 +29,8 @@
         },
         {
           "op": "rename",
-          "from": "dDamageMeterNumRows",
-          "to": "dDamageMeter.panel.rowCount"
-        },
-        {
-          "op": "rename",
           "from": "dDamageMeterOutgoingDamageVisible",
           "to": "dDamageMeter.outgoing.displayMode"
-        },
-        {
-          "op": "rename",
-          "from": "dDamageMeterPlayerInfoWidth",
-          "to": "dDamageMeter.playerInfo.width"
         },
         {
           "op": "rename",
@@ -69,23 +44,8 @@
         },
         {
           "op": "rename",
-          "from": "dDamageMeterRowHeight",
-          "to": "dDamageMeter.panel.rowHeight"
-        },
-        {
-          "op": "rename",
           "from": "dDamageMeterRowIndexVisible",
           "to": "dDamageMeter.panel.showIndex"
-        },
-        {
-          "op": "rename",
-          "from": "dDamageMeterScale",
-          "to": "dDamageMeter.scale"
-        },
-        {
-          "op": "rename",
-          "from": "dDamageMeterShipInfoWidth",
-          "to": "dDamageMeter.shipInfo.width"
         },
         {
           "op": "rename",
@@ -104,86 +64,206 @@
         },
         {
           "op": "transform",
-          "from": "dDamageMeter.background.alpha",
+          "transform": "compose",
           "to": "dDamageMeter.background.alpha",
-          "transform": "stepIndex",
-          "args": {
-            "min": 0,
-            "step": 0.1
+          "sources": [
+            {
+              "key": "dDamageMeterBackgroundOpacity"
+            }
+          ],
+          "value": {
+            "add": [
+              0,
+              {
+                "mul": [
+                  {
+                    "round": {
+                      "src": 0
+                    }
+                  },
+                  0.1
+                ]
+              }
+            ]
           }
         },
         {
           "op": "transform",
-          "from": "dDamageMeter.background.displayMode",
+          "transform": "compose",
           "to": "dDamageMeter.background.displayMode",
-          "transform": "stepIndex",
-          "args": {
-            "min": 1,
-            "step": 1
+          "sources": [
+            {
+              "key": "dDamageMeterBackgroundVisibleOnAlt"
+            }
+          ],
+          "value": {
+            "add": [
+              1,
+              {
+                "mul": [
+                  {
+                    "round": {
+                      "src": 0
+                    }
+                  },
+                  1
+                ]
+              }
+            ]
           }
         },
         {
           "op": "transform",
-          "from": "dDamageMeter.panel.rowCount",
-          "to": "dDamageMeter.panel.rowCount",
-          "transform": "stepIndex",
-          "args": {
-            "min": 1,
-            "step": 1
-          }
-        },
-        {
-          "op": "transform",
-          "from": "dDamageMeter.panel.rowHeight",
-          "to": "dDamageMeter.panel.rowHeight",
-          "transform": "stepIndex",
-          "args": {
-            "min": 1,
-            "step": 1
-          }
-        },
-        {
-          "op": "transform",
-          "from": "dDamageMeter.playerInfo.width",
-          "to": "dDamageMeter.playerInfo.width",
-          "transform": "stepIndex",
-          "args": {
-            "min": 60,
-            "step": 12
-          }
-        },
-        {
-          "op": "transform",
-          "from": "dDamageMeter.scale",
-          "to": "dDamageMeter.scale",
-          "transform": "stepIndex",
-          "args": {
-            "min": 0.5,
-            "step": 0.1
-          }
-        },
-        {
-          "op": "transform",
-          "from": "dDamageMeter.shipInfo.width",
-          "to": "dDamageMeter.shipInfo.width",
-          "transform": "stepIndex",
-          "args": {
-            "min": 45,
-            "step": 9
-          }
-        },
-        {
-          "op": "transform",
-          "from": "dDamageMeter.font.color",
+          "transform": "compose",
           "to": "dDamageMeter.font.color",
-          "transform": "paletteIndex",
-          "args": {
-            "palette": [
-              15658734,
-              1296887,
-              16764006,
-              5040298,
-              16750899
+          "sources": [
+            {
+              "key": "dDamageMeterFontStyleIndex"
+            }
+          ],
+          "value": {
+            "argb": {
+              "rgb": {
+                "table": {
+                  "index": {
+                    "src": 0
+                  },
+                  "values": [
+                    15658734,
+                    1296887,
+                    16764006,
+                    5040298,
+                    16750899
+                  ],
+                  "fallback": 15658734
+                }
+              },
+              "a": 255
+            }
+          }
+        },
+        {
+          "op": "transform",
+          "transform": "compose",
+          "to": "dDamageMeter.panel.rowCount",
+          "sources": [
+            {
+              "key": "dDamageMeterNumRows"
+            }
+          ],
+          "value": {
+            "add": [
+              1,
+              {
+                "mul": [
+                  {
+                    "round": {
+                      "src": 0
+                    }
+                  },
+                  1
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "op": "transform",
+          "transform": "compose",
+          "to": "dDamageMeter.panel.rowHeight",
+          "sources": [
+            {
+              "key": "dDamageMeterRowHeight"
+            }
+          ],
+          "value": {
+            "add": [
+              1,
+              {
+                "mul": [
+                  {
+                    "round": {
+                      "src": 0
+                    }
+                  },
+                  1
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "op": "transform",
+          "transform": "compose",
+          "to": "dDamageMeter.playerInfo.width",
+          "sources": [
+            {
+              "key": "dDamageMeterPlayerInfoWidth"
+            }
+          ],
+          "value": {
+            "add": [
+              60,
+              {
+                "mul": [
+                  {
+                    "round": {
+                      "src": 0
+                    }
+                  },
+                  12
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "op": "transform",
+          "transform": "compose",
+          "to": "dDamageMeter.scale",
+          "sources": [
+            {
+              "key": "dDamageMeterScale"
+            }
+          ],
+          "value": {
+            "add": [
+              0.5,
+              {
+                "mul": [
+                  {
+                    "round": {
+                      "src": 0
+                    }
+                  },
+                  0.1
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "op": "transform",
+          "transform": "compose",
+          "to": "dDamageMeter.shipInfo.width",
+          "sources": [
+            {
+              "key": "dDamageMeterShipInfoWidth"
+            }
+          ],
+          "value": {
+            "add": [
+              45,
+              {
+                "mul": [
+                  {
+                    "round": {
+                      "src": 0
+                    }
+                  },
+                  9
+                ]
+              }
             ]
           }
         }
