@@ -18,7 +18,7 @@
 # Read by the header and by every ADM_TextItem; folded so a silently-wrong key has one place to live.
 # Fixed var names -- one use per scope.  `ttaro.dDamageMeter.fontColor` is a packed `color` setting, so its
 # `value` binds straight through to the ARGB target; never recompute a packed colour in the view
-# (>= 2^31 overflows).  The 5-entry ADM_FONT_COLORS palette it used to index is dead, not renamed.
+# (>= 2^31 overflows).
 (def macro ADM_GET_FONT_COLOR ()
 	(macro TT_GET_PREF _varName="'__fontColorPref'" _key="'ttaro.dDamageMeter.font.color'")
 	(var fontColor:number = "null != __fontColorPref && null != __fontColorPref.value ? __fontColorPref.value : 0xFFEEEEEE")
