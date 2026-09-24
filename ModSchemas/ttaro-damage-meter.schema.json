@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 4,
+  "schemaVersion": 5,
   "id": "cmtkswuwp0008v014j87jx6d7",
   "author": "ttaro",
   "modName": "Damage Meter",
@@ -9,6 +9,7 @@
     {
       "kind": "group",
       "key": "cmsxh2pnt0002v0m04h6klgb6",
+      "display": "section",
       "label": "IDS_TT_TITLE_PLAYER_INFO",
       "collapse": "expanded",
       "children": [
@@ -56,6 +57,7 @@
     {
       "kind": "group",
       "key": "cmsxh2pnv0004v0m03y7kvbco",
+      "display": "section",
       "label": "IDS_TT_TITLE_SHIP_INFO",
       "collapse": "expanded",
       "children": [
@@ -126,13 +128,14 @@
     {
       "kind": "group",
       "key": "cmtktam1d003iv0d4sb9hggdw",
+      "display": "section",
       "label": "IDS_TT_TITLE_GENERAL",
       "collapse": "expanded",
       "children": [
         {
           "kind": "group",
           "key": "cmt4us0gy0016v0rw6yyugago",
-          "aggregate": "inline",
+          "display": "transparent",
           "children": [
             {
               "kind": "setting",
@@ -168,6 +171,7 @@
         {
           "kind": "group",
           "key": "cmtktam3z005jv0d4g7t7k876",
+          "display": "section",
           "label": "IDS_TT_OUTGOING_DAMAGE",
           "children": [
             {
@@ -217,6 +221,7 @@
         {
           "kind": "group",
           "key": "cmtktamc100c4v0d4dfs9whrp",
+          "display": "section",
           "label": "IDS_TT_INCOMING_DAMAGE",
           "children": [
             {
@@ -268,6 +273,7 @@
     {
       "kind": "group",
       "key": "cmtktamgv00g6v0d4tgrghr7v",
+      "display": "section",
       "label": "IDS_TT_ADVANCED_SETTINGS",
       "collapse": "expanded",
       "children": [
@@ -319,6 +325,7 @@
     {
       "kind": "group",
       "key": "cmtktam63007dv0d4r2tk6t3w",
+      "display": "section",
       "label": "IDS_TT_TITLE_BACKGROUND",
       "collapse": "expanded",
       "children": [
