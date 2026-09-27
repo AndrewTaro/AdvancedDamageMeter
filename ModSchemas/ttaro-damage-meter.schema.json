@@ -5,6 +5,7 @@
   "modName": "Damage Meter",
   "slug": "damage-meter",
   "order": 8,
+  "migrationVersion": 1,
   "tree": [
     {
       "kind": "group",
