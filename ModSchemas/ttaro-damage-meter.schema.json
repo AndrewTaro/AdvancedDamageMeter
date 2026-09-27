@@ -5,7 +5,7 @@
   "modName": "Damage Meter",
   "slug": "damage-meter",
   "order": 8,
-  "migrationVersion": 1,
+  "migrationVersion": 2,
   "tree": [
     {
       "kind": "group",
@@ -17,7 +17,7 @@
         {
           "kind": "setting",
           "control": "toggle",
-          "key": "dDamageMeter.playerInfo.clan",
+          "key": "damageMeter.playerInfo.clan",
           "label": "IDS_TT_CLAN_NAME",
           "default": true,
           "enabledWhen": {
@@ -26,7 +26,7 @@
             "conditions": [
               {
                 "kind": "compare",
-                "key": "dDamageMeter.playerInfo.name",
+                "key": "damageMeter.playerInfo.name",
                 "op": "in",
                 "values": [
                   1
@@ -38,14 +38,14 @@
         {
           "kind": "setting",
           "control": "toggle",
-          "key": "dDamageMeter.playerInfo.name",
+          "key": "damageMeter.playerInfo.name",
           "label": "IDS_TT_PLAYER_NAME",
           "default": true
         },
         {
           "kind": "setting",
           "control": "slider",
-          "key": "dDamageMeter.playerInfo.width",
+          "key": "damageMeter.playerInfo.width",
           "label": "IDS_TT_COLUMN_WIDTH",
           "default": 120,
           "min": 60,
@@ -65,21 +65,21 @@
         {
           "kind": "setting",
           "control": "toggle",
-          "key": "dDamageMeter.shipInfo.name",
+          "key": "damageMeter.shipInfo.name",
           "label": "IDS_TT_SHIP_NAME",
           "default": true
         },
         {
           "kind": "setting",
           "control": "toggle",
-          "key": "dDamageMeter.shipInfo.icon",
+          "key": "damageMeter.shipInfo.icon",
           "label": "IDS_TT_CLASS_ICON",
           "default": true
         },
         {
           "kind": "setting",
           "control": "dropdown",
-          "key": "dDamageMeter.shipInfo.color",
+          "key": "damageMeter.shipInfo.color",
           "label": "IDS_TT_CLASS_ICON_COLOR",
           "default": 0,
           "options": [
@@ -116,7 +116,7 @@
         {
           "kind": "setting",
           "control": "slider",
-          "key": "dDamageMeter.shipInfo.width",
+          "key": "damageMeter.shipInfo.width",
           "label": "IDS_TT_COLUMN_WIDTH",
           "default": 90,
           "min": 45,
@@ -141,7 +141,7 @@
             {
               "kind": "setting",
               "control": "color",
-              "key": "dDamageMeter.font.color",
+              "key": "damageMeter.font.color",
               "label": "IDS_TT_COLOR",
               "default": 4293848814,
               "min": 0,
@@ -152,7 +152,7 @@
         {
           "kind": "setting",
           "control": "slider",
-          "key": "dDamageMeter.scale",
+          "key": "damageMeter.scale",
           "label": "IDS_TT_UI_SCALE",
           "default": 1,
           "min": 0.5,
@@ -163,7 +163,7 @@
         {
           "kind": "setting",
           "control": "toggle",
-          "key": "dDamageMeter.disableDragDrop",
+          "key": "damageMeter.disableDragDrop",
           "label": "IDS_TT_DISABLE_DRAG_DROP",
           "hint": {
             "text": "IDS_TT_HINT_DISABLE_DRAG_DROP"
@@ -179,7 +179,7 @@
             {
               "kind": "setting",
               "control": "dropdown",
-              "key": "dDamageMeter.outgoing.displayMode",
+              "key": "damageMeter.outgoing.displayMode",
               "label": "IDS_TT_DISPLAY_MODE",
               "default": 1,
               "options": [
@@ -202,7 +202,7 @@
             {
               "kind": "setting",
               "control": "position",
-              "key": "dDamageMeter.outgoing.position",
+              "key": "damageMeter.outgoing.position",
               "label": "IDS_TT_DRAGDROP_RESET",
               "hint": {
                 "text": "IDS_TT_HINT_DRAGDROP_RESET"
@@ -229,7 +229,7 @@
             {
               "kind": "setting",
               "control": "dropdown",
-              "key": "dDamageMeter.incoming.displayMode",
+              "key": "damageMeter.incoming.displayMode",
               "label": "IDS_TT_DISPLAY_MODE",
               "default": 1,
               "options": [
@@ -252,7 +252,7 @@
             {
               "kind": "setting",
               "control": "position",
-              "key": "dDamageMeter.incoming.position",
+              "key": "damageMeter.incoming.position",
               "label": "IDS_TT_DRAGDROP_RESET",
               "hint": {
                 "text": "IDS_TT_HINT_DRAGDROP_RESET"
@@ -282,28 +282,28 @@
         {
           "kind": "setting",
           "control": "toggle",
-          "key": "dDamageMeter.panel.lastDamage",
+          "key": "damageMeter.panel.lastDamage",
           "label": "IDS_TT_LAST_DAMAGE",
           "default": true
         },
         {
           "kind": "setting",
           "control": "toggle",
-          "key": "dDamageMeter.panel.reverseRows",
+          "key": "damageMeter.panel.reverseRows",
           "label": "IDS_TT_REVERSE_ROWS",
           "default": false
         },
         {
           "kind": "setting",
           "control": "toggle",
-          "key": "dDamageMeter.panel.showIndex",
+          "key": "damageMeter.panel.showIndex",
           "label": "IDS_TT_ROW_INDEX",
           "default": true
         },
         {
           "kind": "setting",
           "control": "slider",
-          "key": "dDamageMeter.panel.rowCount",
+          "key": "damageMeter.panel.rowCount",
           "label": "IDS_TT_ROW_COUNTS",
           "default": 3,
           "min": 1,
@@ -314,7 +314,7 @@
         {
           "kind": "setting",
           "control": "slider",
-          "key": "dDamageMeter.panel.rowHeight",
+          "key": "damageMeter.panel.rowHeight",
           "label": "IDS_TT_ROW_HEIGHT",
           "default": 2,
           "min": 1,
@@ -334,7 +334,7 @@
         {
           "kind": "setting",
           "control": "dropdown",
-          "key": "dDamageMeter.background.displayMode",
+          "key": "damageMeter.background.displayMode",
           "label": "IDS_TT_DISPLAY_MODE",
           "hint": {
             "text": "IDS_TT_HINT_DISPLAY_MODE"
@@ -360,7 +360,7 @@
         {
           "kind": "setting",
           "control": "slider",
-          "key": "dDamageMeter.background.alpha",
+          "key": "damageMeter.background.alpha",
           "label": "IDS_TT_OPACITY",
           "default": 0.4,
           "min": 0,

@@ -268,15 +268,126 @@
           }
         }
       ]
+    },
+    {
+      "version": 2,
+      "description": "key moves (auto) — 21 rename(s)",
+      "ops": [
+        {
+          "op": "rename",
+          "from": "dDamageMeter.background.alpha",
+          "to": "damageMeter.background.alpha"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.background.displayMode",
+          "to": "damageMeter.background.displayMode"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.disableDragDrop",
+          "to": "damageMeter.disableDragDrop"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.font.color",
+          "to": "damageMeter.font.color"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.incoming.displayMode",
+          "to": "damageMeter.incoming.displayMode"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.incoming.position",
+          "to": "damageMeter.incoming.position"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.outgoing.displayMode",
+          "to": "damageMeter.outgoing.displayMode"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.outgoing.position",
+          "to": "damageMeter.outgoing.position"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.panel.lastDamage",
+          "to": "damageMeter.panel.lastDamage"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.panel.reverseRows",
+          "to": "damageMeter.panel.reverseRows"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.panel.rowCount",
+          "to": "damageMeter.panel.rowCount"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.panel.rowHeight",
+          "to": "damageMeter.panel.rowHeight"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.panel.showIndex",
+          "to": "damageMeter.panel.showIndex"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.playerInfo.clan",
+          "to": "damageMeter.playerInfo.clan"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.playerInfo.name",
+          "to": "damageMeter.playerInfo.name"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.playerInfo.width",
+          "to": "damageMeter.playerInfo.width"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.scale",
+          "to": "damageMeter.scale"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.shipInfo.color",
+          "to": "damageMeter.shipInfo.color"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.shipInfo.icon",
+          "to": "damageMeter.shipInfo.icon"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.shipInfo.name",
+          "to": "damageMeter.shipInfo.name"
+        },
+        {
+          "op": "rename",
+          "from": "dDamageMeter.shipInfo.width",
+          "to": "damageMeter.shipInfo.width"
+        }
+      ]
     }
   ],
   "legacyPositions": [
     {
-      "key": "dDamageMeter.incoming.position",
+      "key": "damageMeter.incoming.position",
       "element": "advancedDamageMeterIncoming"
     },
     {
-      "key": "dDamageMeter.outgoing.position",
+      "key": "damageMeter.outgoing.position",
       "element": "advancedDamageMeterOutgoing"
     }
   ]
